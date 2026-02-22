@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/mia_backend.dir/src/main.cpp.o CMakeFiles/mia_backend.dir/src/api/Server.cpp.o CMakeFiles/mia_backend.dir/src/parser/CommandRunner.cpp.o CMakeFiles/mia_backend.dir/src/disk/BinaryIO.cpp.o CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o -o mia_backend 

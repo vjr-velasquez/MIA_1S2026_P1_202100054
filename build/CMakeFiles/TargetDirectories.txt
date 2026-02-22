@@ -1,0 +1,3 @@
+/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles/mia_backend.dir
+/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles/edit_cache.dir
+/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles/rebuild_cache.dir
