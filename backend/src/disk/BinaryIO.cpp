@@ -2,6 +2,7 @@
 #include <fstream>
 
 namespace BinaryIO {
+
 bool writeAt0(const std::string& path, const void* data, size_t size) {
     std::fstream file(path, std::ios::in | std::ios::out | std::ios::binary);
     if (!file.is_open()) return false;
@@ -12,4 +13,17 @@ bool writeAt0(const std::string& path, const void* data, size_t size) {
     file.close();
     return true;
 }
+
+bool readAt0(const std::string& path, void* data, size_t size) {
+    std::ifstream file(path, std::ios::in | std::ios::binary);
+    if (!file.is_open()) return false;
+
+    file.seekg(0, std::ios::beg);
+    file.read(reinterpret_cast<char*>(data),
+              static_cast<std::streamsize>(size));
+    bool ok = file.good() || file.eof();
+    file.close();
+    return ok;
+}
+
 }

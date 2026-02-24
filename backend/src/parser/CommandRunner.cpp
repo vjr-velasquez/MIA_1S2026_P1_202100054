@@ -1,5 +1,9 @@
 #include "parser/CommandRunner.h"
 #include "commands/MkDisk.h"
+#include "commands/RmDisk.h"
+#include "commands/FdDisk.h"
+#include "commands/MountCmd.h"
+
 
 #include <sstream>
 #include <algorithm>
@@ -98,6 +102,30 @@ std::string CommandRunner::run(const std::string& input) {
             MkDisk mk;
             out << mk.exec(size, unit, fit, path);
         }
+
+        else if (c == "rmdisk") {
+            auto params = parse_params(t);
+
+            if (!params.count("path")) { out << "ERROR: rmdisk -> falta -path\n"; continue; }
+
+            RmDisk rm;
+            out << rm.exec(params["path"]);
+        }
+        else if (c == "fdisk") {
+            FdDisk fd;
+            out << fd.exec(t);
+        }
+        else if (c == "mount") {
+            MountCmd m;
+            out << m.exec(t);
+        }
+        else if (c == "mounted") {
+            MountedCmd m;
+            out << m.exec();
+        }
+
+
+
         else {
             out << "ERROR: comando no reconocido -> " << cmd << "\n";
         }

@@ -153,6 +153,30 @@ src/api/Server.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/api/Server.cpp.s
 .PHONY : src/api/Server.cpp.s
 
+src/commands/FdDisk.o: src/commands/FdDisk.cpp.o
+.PHONY : src/commands/FdDisk.o
+
+# target to build an object file
+src/commands/FdDisk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o
+.PHONY : src/commands/FdDisk.cpp.o
+
+src/commands/FdDisk.i: src/commands/FdDisk.cpp.i
+.PHONY : src/commands/FdDisk.i
+
+# target to preprocess a source file
+src/commands/FdDisk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.i
+.PHONY : src/commands/FdDisk.cpp.i
+
+src/commands/FdDisk.s: src/commands/FdDisk.cpp.s
+.PHONY : src/commands/FdDisk.s
+
+# target to generate assembly for a file
+src/commands/FdDisk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.s
+.PHONY : src/commands/FdDisk.cpp.s
+
 src/commands/MkDisk.o: src/commands/MkDisk.cpp.o
 .PHONY : src/commands/MkDisk.o
 
@@ -177,6 +201,54 @@ src/commands/MkDisk.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.s
 .PHONY : src/commands/MkDisk.cpp.s
 
+src/commands/MountCmd.o: src/commands/MountCmd.cpp.o
+.PHONY : src/commands/MountCmd.o
+
+# target to build an object file
+src/commands/MountCmd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.o
+.PHONY : src/commands/MountCmd.cpp.o
+
+src/commands/MountCmd.i: src/commands/MountCmd.cpp.i
+.PHONY : src/commands/MountCmd.i
+
+# target to preprocess a source file
+src/commands/MountCmd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.i
+.PHONY : src/commands/MountCmd.cpp.i
+
+src/commands/MountCmd.s: src/commands/MountCmd.cpp.s
+.PHONY : src/commands/MountCmd.s
+
+# target to generate assembly for a file
+src/commands/MountCmd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.s
+.PHONY : src/commands/MountCmd.cpp.s
+
+src/commands/RmDisk.o: src/commands/RmDisk.cpp.o
+.PHONY : src/commands/RmDisk.o
+
+# target to build an object file
+src/commands/RmDisk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o
+.PHONY : src/commands/RmDisk.cpp.o
+
+src/commands/RmDisk.i: src/commands/RmDisk.cpp.i
+.PHONY : src/commands/RmDisk.i
+
+# target to preprocess a source file
+src/commands/RmDisk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.i
+.PHONY : src/commands/RmDisk.cpp.i
+
+src/commands/RmDisk.s: src/commands/RmDisk.cpp.s
+.PHONY : src/commands/RmDisk.s
+
+# target to generate assembly for a file
+src/commands/RmDisk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.s
+.PHONY : src/commands/RmDisk.cpp.s
+
 src/disk/BinaryIO.o: src/disk/BinaryIO.cpp.o
 .PHONY : src/disk/BinaryIO.o
 
@@ -200,6 +272,30 @@ src/disk/BinaryIO.s: src/disk/BinaryIO.cpp.s
 src/disk/BinaryIO.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/disk/BinaryIO.cpp.s
 .PHONY : src/disk/BinaryIO.cpp.s
+
+src/disk/MountManager.o: src/disk/MountManager.cpp.o
+.PHONY : src/disk/MountManager.o
+
+# target to build an object file
+src/disk/MountManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o
+.PHONY : src/disk/MountManager.cpp.o
+
+src/disk/MountManager.i: src/disk/MountManager.cpp.i
+.PHONY : src/disk/MountManager.i
+
+# target to preprocess a source file
+src/disk/MountManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.i
+.PHONY : src/disk/MountManager.cpp.i
+
+src/disk/MountManager.s: src/disk/MountManager.cpp.s
+.PHONY : src/disk/MountManager.s
+
+# target to generate assembly for a file
+src/disk/MountManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.s
+.PHONY : src/disk/MountManager.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -261,12 +357,24 @@ help:
 	@echo "... src/api/Server.o"
 	@echo "... src/api/Server.i"
 	@echo "... src/api/Server.s"
+	@echo "... src/commands/FdDisk.o"
+	@echo "... src/commands/FdDisk.i"
+	@echo "... src/commands/FdDisk.s"
 	@echo "... src/commands/MkDisk.o"
 	@echo "... src/commands/MkDisk.i"
 	@echo "... src/commands/MkDisk.s"
+	@echo "... src/commands/MountCmd.o"
+	@echo "... src/commands/MountCmd.i"
+	@echo "... src/commands/MountCmd.s"
+	@echo "... src/commands/RmDisk.o"
+	@echo "... src/commands/RmDisk.i"
+	@echo "... src/commands/RmDisk.s"
 	@echo "... src/disk/BinaryIO.o"
 	@echo "... src/disk/BinaryIO.i"
 	@echo "... src/disk/BinaryIO.s"
+	@echo "... src/disk/MountManager.o"
+	@echo "... src/disk/MountManager.i"
+	@echo "... src/disk/MountManager.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

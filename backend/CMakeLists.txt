@@ -11,6 +11,11 @@ add_executable(mia_backend
 
     src/disk/BinaryIO.cpp
     src/commands/MkDisk.cpp
+    src/commands/RmDisk.cpp
+    src/commands/FdDisk.cpp
+    src/disk/MountManager.cpp
+    src/commands/MountCmd.cpp
+
 )
 
 target_include_directories(mia_backend PRIVATE
