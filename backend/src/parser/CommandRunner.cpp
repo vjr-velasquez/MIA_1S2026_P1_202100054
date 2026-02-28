@@ -3,6 +3,7 @@
 #include "commands/RmDisk.h"
 #include "commands/FdDisk.h"
 #include "commands/MountCmd.h"
+#include "commands/RepCmd.h"
 
 
 #include <sstream>
@@ -123,7 +124,10 @@ std::string CommandRunner::run(const std::string& input) {
             MountedCmd m;
             out << m.exec();
         }
-
+        else if (c == "rep") {
+            RepCmd r;
+            out << r.exec(t);
+        }
 
 
         else {

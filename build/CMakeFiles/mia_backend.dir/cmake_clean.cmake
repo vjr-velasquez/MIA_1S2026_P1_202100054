@@ -7,6 +7,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o.d"
   "CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.o"
   "CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.o.d"
+  "CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.o"
+  "CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.o.d"
   "CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o"
   "CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o.d"
   "CMakeFiles/mia_backend.dir/src/disk/BinaryIO.cpp.o"

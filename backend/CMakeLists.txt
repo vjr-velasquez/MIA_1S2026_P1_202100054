@@ -15,6 +15,7 @@ add_executable(mia_backend
     src/commands/FdDisk.cpp
     src/disk/MountManager.cpp
     src/commands/MountCmd.cpp
+    src/commands/RepCmd.cpp
 
 )
 

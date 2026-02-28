@@ -117,11 +117,12 @@ CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o: \
  /usr/include/c++/13/bits/uses_allocator.h \
  /usr/include/c++/13/bits/uses_allocator_args.h /usr/include/c++/13/tuple \
  /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/disk/BinaryIO.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/structs/MBR.h \
  /usr/include/c++/13/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/structs/MBR.h \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/structs/EBR.h \
  /usr/include/c++/13/sstream /usr/include/c++/13/istream \
  /usr/include/c++/13/ios /usr/include/c++/13/exception \
  /usr/include/c++/13/bits/exception_ptr.h \

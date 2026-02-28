@@ -1,6 +1,7 @@
 #include "commands/FdDisk.h"
 #include "disk/BinaryIO.h"
 #include "structs/MBR.h"
+#include "structs/EBR.h"
 
 #include <sstream>
 #include <unordered_map>
@@ -53,7 +54,6 @@ static std::unordered_map<std::string,std::string> parse_params_local(const std:
 }
 
 static bool name_equals(const char part_name[16], const std::string& name) {
-    // part_name puede no tener \0 al final; comparamos hasta 16
     char tmp[17];
     std::memset(tmp, 0, sizeof(tmp));
     std::memcpy(tmp, part_name, 16);
@@ -61,10 +61,8 @@ static bool name_equals(const char part_name[16], const std::string& name) {
 }
 
 static int32_t calc_start_primary(const MBR& mbr, int32_t mbr_size_bytes) {
-    // inicio “default”: inmediatamente después del MBR
     int32_t start = mbr_size_bytes;
 
-    // si hay particiones creadas, ponemos start al final de la última (mayor end)
     int32_t max_end = start;
     for (int i = 0; i < 4; i++) {
         const auto& p = mbr.mbr_partitions[i];
@@ -74,6 +72,43 @@ static int32_t calc_start_primary(const MBR& mbr, int32_t mbr_size_bytes) {
         }
     }
     return max_end;
+}
+
+// ===== Helpers Sprint2 =====
+static bool is_used(const Partition& p) {
+    return p.part_status == '1' && p.part_start >= 0 && p.part_size > 0;
+}
+
+static bool has_extended(const MBR& mbr) {
+    for (int i = 0; i < 4; i++) {
+        const auto& p = mbr.mbr_partitions[i];
+        if (is_used(p) && (p.part_type == 'E' || p.part_type == 'e')) return true;
+    }
+    return false;
+}
+
+static bool get_extended(const MBR& mbr, Partition& out) {
+    for (int i = 0; i < 4; i++) {
+        const auto& p = mbr.mbr_partitions[i];
+        if (is_used(p) && (p.part_type == 'E' || p.part_type == 'e')) { out = p; return true; }
+    }
+    return false;
+}
+
+static bool logical_name_exists(const std::string& path, const Partition& ext, const std::string& name) {
+    int32_t ext_start = ext.part_start;
+    int32_t ext_end   = ext.part_start + ext.part_size;
+
+    int32_t off = ext_start;
+    while (off >= ext_start && off < ext_end) {
+        EBR e{};
+        if (!BinaryIO::readAt(path, off, &e, sizeof(EBR))) return false;
+
+        if (e.part_status == '1' && name_equals(e.part_name, name)) return true;
+        if (e.part_next == -1) break;
+        off = e.part_next;
+    }
+    return false;
 }
 
 std::string FdDisk::exec(const std::string& line) {
@@ -106,7 +141,9 @@ std::string FdDisk::exec(const std::string& line) {
     char type = 'P';
     if (params.count("type") && !params["type"].empty()) type = params["type"][0];
     type = (char)std::toupper((unsigned char)type);
-    if (type != 'P') return "ERROR: fdisk -> por ahora solo -type=P (primaria)\n";
+    if (!(type == 'P' || type == 'E' || type == 'L')) {
+        return "ERROR: fdisk -> -type debe ser P, E o L\n";
+    }
 
     char fit = 'F';
     if (params.count("fit") && !params["fit"].empty()) fit = params["fit"][0];
@@ -119,7 +156,7 @@ std::string FdDisk::exec(const std::string& line) {
         return "ERROR: fdisk -> no se pudo leer el MBR (¿path correcto?)\n";
     }
 
-    // Validar nombre no repetido
+    // Validar nombre no repetido en MBR
     for (int i = 0; i < 4; i++) {
         const auto& p = mbr.mbr_partitions[i];
         if (p.part_status == '1' && name_equals(p.part_name, name)) {
@@ -127,7 +164,100 @@ std::string FdDisk::exec(const std::string& line) {
         }
     }
 
-    // Buscar slot libre
+    // ====== Caso L: lógica (NO usa slots del MBR) ======
+    if (type == 'L') {
+        Partition ext{};
+        if (!get_extended(mbr, ext)) return "ERROR: fdisk -> no existe partición extendida\n";
+
+        if (logical_name_exists(path, ext, name)) {
+            return "ERROR: fdisk -> ya existe una partición lógica con ese nombre\n";
+        }
+
+        int32_t ext_start = ext.part_start;
+        int32_t ext_end   = ext.part_start + ext.part_size;
+
+        // leer EBR inicial
+        EBR first{};
+        if (!BinaryIO::readAt(path, ext_start, &first, sizeof(EBR))) {
+            return "ERROR: fdisk -> no se pudo leer EBR inicial\n";
+        }
+
+        // Caso: primer EBR vacío
+        if (first.part_status == '0' && first.part_size == 0 && first.part_next == -1) {
+            int32_t need = (int32_t)sizeof(EBR) + size_bytes;
+            if (ext_start + need > ext_end) return "ERROR: fdisk -> no hay espacio en la extendida\n";
+
+            first.part_status = '1';
+            first.part_fit    = fit;
+            first.part_start  = ext_start + (int32_t)sizeof(EBR);
+            first.part_size   = size_bytes;
+            first.part_next   = -1;
+            std::memset(first.part_name, 0, 16);
+            std::memcpy(first.part_name, name.c_str(), name.size());
+
+            if (!BinaryIO::writeAt(path, ext_start, &first, sizeof(EBR))) {
+                return "ERROR: fdisk -> no se pudo escribir EBR\n";
+            }
+
+            out << "OK: fdisk -> partición lógica creada: name=" << name
+                << " ebr=" << ext_start
+                << " start=" << first.part_start
+                << " size=" << size_bytes << " bytes\n";
+            return out.str();
+        }
+
+        // Insertar al final de la cadena
+        int32_t off = ext_start;
+        EBR cur{};
+        while (true) {
+            if (!BinaryIO::readAt(path, off, &cur, sizeof(EBR))) {
+                return "ERROR: fdisk -> no se pudo leer cadena EBR\n";
+            }
+            if (cur.part_next == -1) break;
+            off = cur.part_next;
+        }
+        int32_t last_ebr_off = off;
+        EBR last = cur;
+
+        int32_t last_data_start = last_ebr_off + (int32_t)sizeof(EBR);
+        int32_t last_data_end   = last_data_start + last.part_size;
+
+        int32_t new_ebr_off = last_data_end;
+        int32_t need = (int32_t)sizeof(EBR) + size_bytes;
+
+        if (new_ebr_off + need > ext_end) return "ERROR: fdisk -> no hay espacio suficiente en la extendida\n";
+
+        EBR neu{};
+        neu.part_status = '1';
+        neu.part_fit    = fit;
+        neu.part_start  = new_ebr_off + (int32_t)sizeof(EBR);
+        neu.part_size   = size_bytes;
+        neu.part_next   = -1;
+        std::memset(neu.part_name, 0, 16);
+        std::memcpy(neu.part_name, name.c_str(), name.size());
+
+        if (!BinaryIO::writeAt(path, new_ebr_off, &neu, sizeof(EBR))) {
+            return "ERROR: fdisk -> no se pudo escribir nuevo EBR\n";
+        }
+
+        last.part_next = new_ebr_off;
+        if (!BinaryIO::writeAt(path, last_ebr_off, &last, sizeof(EBR))) {
+            return "ERROR: fdisk -> no se pudo actualizar EBR anterior\n";
+        }
+
+        out << "OK: fdisk -> partición lógica creada: name=" << name
+            << " ebr=" << new_ebr_off
+            << " start=" << neu.part_start
+            << " size=" << size_bytes << " bytes\n";
+        return out.str();
+    }
+
+    // ====== Caso E: extendida (usa slots del MBR, solo 1) ======
+    if (type == 'E') {
+        if (has_extended(mbr)) return "ERROR: fdisk -> ya existe una partición extendida\n";
+    }
+
+    // Buscar slot libre (P o E usan slot)
     int free_idx = -1;
     for (int i = 0; i < 4; i++) {
         if (mbr.mbr_partitions[i].part_status != '1') { free_idx = i; break; }
@@ -142,10 +272,10 @@ std::string FdDisk::exec(const std::string& line) {
         return "ERROR: fdisk -> no hay espacio suficiente en el disco\n";
     }
 
-    // Escribir partición
+    // Escribir partición (P o E)
     Partition np{};
     np.part_status = '1';
-    np.part_type = 'P';
+    np.part_type = type; // 'P' o 'E'
     np.part_fit = fit;
     np.part_start = start;
     np.part_size = size_bytes;
@@ -159,6 +289,26 @@ std::string FdDisk::exec(const std::string& line) {
         return "ERROR: fdisk -> no se pudo escribir el MBR\n";
     }
 
+    // Si es extendida: inicializar EBR vacío en el inicio de la extendida
+    if (type == 'E') {
+        EBR e{};
+        e.part_status = '0';
+        e.part_fit    = fit;
+        e.part_start  = start + (int32_t)sizeof(EBR);
+        e.part_size   = 0;
+        e.part_next   = -1;
+        std::memset(e.part_name, 0, 16);
+
+        if (!BinaryIO::writeAt(path, start, &e, sizeof(EBR))) {
+            return "ERROR: fdisk -> no se pudo inicializar EBR en la extendida\n";
+        }
+
+        out << "OK: fdisk -> partición extendida creada: name=" << name
+            << " start=" << start << " size=" << size_bytes << " bytes\n";
+        return out.str();
+    }
+
+    // Primaria (igual que antes)
     out << "OK: fdisk -> partición primaria creada: name=" << name
         << " start=" << start << " size=" << size_bytes << " bytes\n";
     return out.str();

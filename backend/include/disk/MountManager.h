@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <cstdint>
 
 struct MountEntry {
     std::string id;
@@ -18,6 +19,9 @@ public:
     std::string mount(const std::string& path, const std::string& name, int32_t start, int32_t size);
 
     std::string list() const;
+
+    // NUEVO: buscar una montada por id (para rep -id)
+    bool getById(const std::string& id, MountEntry& out) const;
 
 private:
     std::vector<MountEntry> mounts;

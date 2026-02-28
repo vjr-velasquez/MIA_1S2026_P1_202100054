@@ -65,3 +65,10 @@ std::string MountManager::list() const {
     }
     return out.str();
 }
+
+bool MountManager::getById(const std::string& id, MountEntry& out) const {
+    for (const auto& m : mounts) {
+        if (m.id == id) { out = m; return true; }
+    }
+    return false;
+}

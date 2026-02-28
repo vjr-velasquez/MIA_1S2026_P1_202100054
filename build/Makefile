@@ -225,6 +225,30 @@ src/commands/MountCmd.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.s
 .PHONY : src/commands/MountCmd.cpp.s
 
+src/commands/RepCmd.o: src/commands/RepCmd.cpp.o
+.PHONY : src/commands/RepCmd.o
+
+# target to build an object file
+src/commands/RepCmd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.o
+.PHONY : src/commands/RepCmd.cpp.o
+
+src/commands/RepCmd.i: src/commands/RepCmd.cpp.i
+.PHONY : src/commands/RepCmd.i
+
+# target to preprocess a source file
+src/commands/RepCmd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.i
+.PHONY : src/commands/RepCmd.cpp.i
+
+src/commands/RepCmd.s: src/commands/RepCmd.cpp.s
+.PHONY : src/commands/RepCmd.s
+
+# target to generate assembly for a file
+src/commands/RepCmd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.s
+.PHONY : src/commands/RepCmd.cpp.s
+
 src/commands/RmDisk.o: src/commands/RmDisk.cpp.o
 .PHONY : src/commands/RmDisk.o
 
@@ -366,6 +390,9 @@ help:
 	@echo "... src/commands/MountCmd.o"
 	@echo "... src/commands/MountCmd.i"
 	@echo "... src/commands/MountCmd.s"
+	@echo "... src/commands/RepCmd.o"
+	@echo "... src/commands/RepCmd.i"
+	@echo "... src/commands/RepCmd.s"
 	@echo "... src/commands/RmDisk.o"
 	@echo "... src/commands/RmDisk.i"
 	@echo "... src/commands/RmDisk.s"
