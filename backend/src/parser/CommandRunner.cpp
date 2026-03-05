@@ -4,6 +4,7 @@
 #include "commands/FdDisk.h"
 #include "commands/MountCmd.h"
 #include "commands/RepCmd.h"
+#include "commands/MkFsCmd.h"
 
 
 #include <sstream>
@@ -128,8 +129,10 @@ std::string CommandRunner::run(const std::string& input) {
             RepCmd r;
             out << r.exec(t);
         }
-
-
+        else if (c == "mkfs") {              
+            MkFsCmd mkfs;
+            out << mkfs.exec(t);
+        }
         else {
             out << "ERROR: comando no reconocido -> " << cmd << "\n";
         }

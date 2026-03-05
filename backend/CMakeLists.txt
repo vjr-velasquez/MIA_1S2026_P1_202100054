@@ -3,6 +3,7 @@ project(mia_backend LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(mia_backend
     src/main.cpp
@@ -10,13 +11,17 @@ add_executable(mia_backend
     src/parser/CommandRunner.cpp
 
     src/disk/BinaryIO.cpp
+    src/disk/MountManager.cpp
+
     src/commands/MkDisk.cpp
     src/commands/RmDisk.cpp
     src/commands/FdDisk.cpp
-    src/disk/MountManager.cpp
     src/commands/MountCmd.cpp
     src/commands/RepCmd.cpp
+    src/commands/MkFsCmd.cpp
 
+    src/fs/Ext2IO.cpp
+    src/fs/Ext2Formatter.cpp
 )
 
 target_include_directories(mia_backend PRIVATE
@@ -27,3 +32,11 @@ target_include_directories(mia_backend PRIVATE
 
 find_package(Threads REQUIRED)
 target_link_libraries(mia_backend PRIVATE Threads::Threads)
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(mia_backend PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+    )
+endif()

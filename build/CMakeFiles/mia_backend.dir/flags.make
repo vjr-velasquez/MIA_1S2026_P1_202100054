@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/vjr-velasquez/Documentos/mia-proyecto1/backend/include -I/home/vjr-velasquez/Documentos/mia-proyecto1/backend/src -I/home/vjr-velasquez/Documentos/mia-proyecto1/backend/vendor
 
-CXX_FLAGS = -std=gnu++17
+CXX_FLAGS = -std=c++17 -Wall -Wextra -Wpedantic
 

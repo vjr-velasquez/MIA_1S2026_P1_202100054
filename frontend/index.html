@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MIA Proyecto 1 - Sprint 3</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 16px; }
+    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    textarea { width: 100%; height: 260px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    button { padding: 8px 12px; cursor: pointer; }
+    .muted { opacity: 0.8; font-size: 12px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h2>MIA Proyecto 1 - Sprint 3</h2>
+
+  <div class="row">
+    <label>Backend URL:</label>
+    <input id="backendUrl" type="text" value="http://localhost:8080" style="width: 260px;" />
+    <button id="btnHealth">Health</button>
+    <span id="healthStatus" class="muted"></span>
+  </div>
+
+  <div class="row" style="margin-top: 10px;">
+    <input id="fileInput" type="file" accept=".smia,.txt" />
+    <button id="btnLoadExample">Cargar ejemplo</button>
+    <button id="btnRun">Ejecutar</button>
+    <button id="btnClearOut">Limpiar salida</button>
+  </div>
+
+  <div class="grid" style="margin-top: 12px;">
+    <div>
+      <h3>Entrada (comandos / script)</h3>
+      <textarea id="inputArea" placeholder="# escribe comandos aquí..."></textarea>
+      <div class="muted">Soporta scripts .smia. Comentarios con # y líneas en blanco se preservan.</div>
+    </div>
+
+    <div>
+      <h3>Salida</h3>
+      <textarea id="outputArea" readonly placeholder="Aquí aparecerá la salida..."></textarea>
+      <div class="muted">La salida viene directo del backend: OK: / ERROR:</div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

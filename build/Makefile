@@ -201,6 +201,30 @@ src/commands/MkDisk.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.s
 .PHONY : src/commands/MkDisk.cpp.s
 
+src/commands/MkFsCmd.o: src/commands/MkFsCmd.cpp.o
+.PHONY : src/commands/MkFsCmd.o
+
+# target to build an object file
+src/commands/MkFsCmd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o
+.PHONY : src/commands/MkFsCmd.cpp.o
+
+src/commands/MkFsCmd.i: src/commands/MkFsCmd.cpp.i
+.PHONY : src/commands/MkFsCmd.i
+
+# target to preprocess a source file
+src/commands/MkFsCmd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.i
+.PHONY : src/commands/MkFsCmd.cpp.i
+
+src/commands/MkFsCmd.s: src/commands/MkFsCmd.cpp.s
+.PHONY : src/commands/MkFsCmd.s
+
+# target to generate assembly for a file
+src/commands/MkFsCmd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.s
+.PHONY : src/commands/MkFsCmd.cpp.s
+
 src/commands/MountCmd.o: src/commands/MountCmd.cpp.o
 .PHONY : src/commands/MountCmd.o
 
@@ -321,6 +345,54 @@ src/disk/MountManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.s
 .PHONY : src/disk/MountManager.cpp.s
 
+src/fs/Ext2Formatter.o: src/fs/Ext2Formatter.cpp.o
+.PHONY : src/fs/Ext2Formatter.o
+
+# target to build an object file
+src/fs/Ext2Formatter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o
+.PHONY : src/fs/Ext2Formatter.cpp.o
+
+src/fs/Ext2Formatter.i: src/fs/Ext2Formatter.cpp.i
+.PHONY : src/fs/Ext2Formatter.i
+
+# target to preprocess a source file
+src/fs/Ext2Formatter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.i
+.PHONY : src/fs/Ext2Formatter.cpp.i
+
+src/fs/Ext2Formatter.s: src/fs/Ext2Formatter.cpp.s
+.PHONY : src/fs/Ext2Formatter.s
+
+# target to generate assembly for a file
+src/fs/Ext2Formatter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.s
+.PHONY : src/fs/Ext2Formatter.cpp.s
+
+src/fs/Ext2IO.o: src/fs/Ext2IO.cpp.o
+.PHONY : src/fs/Ext2IO.o
+
+# target to build an object file
+src/fs/Ext2IO.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o
+.PHONY : src/fs/Ext2IO.cpp.o
+
+src/fs/Ext2IO.i: src/fs/Ext2IO.cpp.i
+.PHONY : src/fs/Ext2IO.i
+
+# target to preprocess a source file
+src/fs/Ext2IO.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.i
+.PHONY : src/fs/Ext2IO.cpp.i
+
+src/fs/Ext2IO.s: src/fs/Ext2IO.cpp.s
+.PHONY : src/fs/Ext2IO.s
+
+# target to generate assembly for a file
+src/fs/Ext2IO.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.s
+.PHONY : src/fs/Ext2IO.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -387,6 +459,9 @@ help:
 	@echo "... src/commands/MkDisk.o"
 	@echo "... src/commands/MkDisk.i"
 	@echo "... src/commands/MkDisk.s"
+	@echo "... src/commands/MkFsCmd.o"
+	@echo "... src/commands/MkFsCmd.i"
+	@echo "... src/commands/MkFsCmd.s"
 	@echo "... src/commands/MountCmd.o"
 	@echo "... src/commands/MountCmd.i"
 	@echo "... src/commands/MountCmd.s"
@@ -402,6 +477,12 @@ help:
 	@echo "... src/disk/MountManager.o"
 	@echo "... src/disk/MountManager.i"
 	@echo "... src/disk/MountManager.s"
+	@echo "... src/fs/Ext2Formatter.o"
+	@echo "... src/fs/Ext2Formatter.i"
+	@echo "... src/fs/Ext2Formatter.s"
+	@echo "... src/fs/Ext2IO.o"
+	@echo "... src/fs/Ext2IO.i"
+	@echo "... src/fs/Ext2IO.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

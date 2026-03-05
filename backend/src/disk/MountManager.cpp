@@ -11,18 +11,26 @@ std::string MountManager::next_id_for_disk(const std::string& path) {
     // letra por disco: a,b,c... según orden de aparición
     // número por partición: 1,2,3... por cada disco
     std::vector<std::string> disks;
+
     for (const auto& m : mounts) {
         if (std::find(disks.begin(), disks.end(), m.path) == disks.end()) {
             disks.push_back(m.path);
         }
     }
-    auto it = std::find(disks.begin(), disks.end(), path);
-    size_t disk_index = (it == disks.end()) ? disks.size() : (size_t)std::distance(disks.begin(), it);
 
-    char letter = (char)('a' + (int)disk_index);
+    auto it = std::find(disks.begin(), disks.end(), path);
+    size_t disk_index = (it == disks.end())
+        ? disks.size()
+        : static_cast<size_t>(std::distance(disks.begin(), it));
+
+    char letter = static_cast<char>('a' + static_cast<int>(disk_index));
 
     int count_for_disk = 0;
-    for (const auto& m : mounts) if (m.path == path) count_for_disk++;
+    for (const auto& m : mounts) {
+        if (m.path == path) {
+            count_for_disk++;
+        }
+    }
 
     int num = count_for_disk + 1;
 
@@ -54,6 +62,7 @@ std::string MountManager::mount(const std::string& path, const std::string& name
 
 std::string MountManager::list() const {
     std::ostringstream out;
+
     if (mounts.empty()) {
         out << "No hay particiones montadas.\n";
         return out.str();
@@ -61,14 +70,23 @@ std::string MountManager::list() const {
 
     out << "PARTICIONES MONTADAS:\n";
     for (const auto& m : mounts) {
-        out << "- " << m.id << " | " << m.name << " | " << m.path << "\n";
+        out << "- " << m.id
+            << " | " << m.name
+            << " | " << m.path
+            << " | start=" << m.start
+            << " | size=" << m.size
+            << "\n";
     }
+
     return out.str();
 }
 
 bool MountManager::getById(const std::string& id, MountEntry& out) const {
     for (const auto& m : mounts) {
-        if (m.id == id) { out = m; return true; }
+        if (m.id == id) {
+            out = m;
+            return true;
+        }
     }
     return false;
 }

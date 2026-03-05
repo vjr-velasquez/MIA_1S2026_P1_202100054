@@ -121,6 +121,7 @@ CMakeFiles/mia_backend.dir/src/parser/CommandRunner.cpp.o: \
  /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/FdDisk.h \
  /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/MountCmd.h \
  /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/RepCmd.h \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/MkFsCmd.h \
  /usr/include/c++/13/sstream /usr/include/c++/13/istream \
  /usr/include/c++/13/ios /usr/include/c++/13/exception \
  /usr/include/c++/13/bits/exception_ptr.h \

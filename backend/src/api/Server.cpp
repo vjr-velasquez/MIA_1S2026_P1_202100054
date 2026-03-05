@@ -7,10 +7,12 @@
 
 using json = nlohmann::json;
 
+
 static void add_cors(httplib::Response& res) {
     res.set_header("Access-Control-Allow-Origin", "*");
-    res.set_header("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.set_header("Access-Control-Allow-Headers", "Content-Type");
+    res.set_header("Access-Control-Max-Age", "86400"); // opcional
 }
 
 void Server::run(int port) {

@@ -125,10 +125,24 @@ CMakeFiles/mia_backend.dir/src/disk/BinaryIO.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mia_backend.dir/src/disk/BinaryIO.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/disk/BinaryIO.cpp -o CMakeFiles/mia_backend.dir/src/disk/BinaryIO.cpp.s
 
+CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o: CMakeFiles/mia_backend.dir/flags.make
+CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o: /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/disk/MountManager.cpp
+CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o: CMakeFiles/mia_backend.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o -MF CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o.d -o CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o -c /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/disk/MountManager.cpp
+
+CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/disk/MountManager.cpp > CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.i
+
+CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/disk/MountManager.cpp -o CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.s
+
 CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o: CMakeFiles/mia_backend.dir/flags.make
 CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o: /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/MkDisk.cpp
 CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o: CMakeFiles/mia_backend.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o -MF CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o.d -o CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o -c /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/MkDisk.cpp
 
 CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.i: cmake_force
@@ -142,7 +156,7 @@ CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.s: cmake_force
 CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o: CMakeFiles/mia_backend.dir/flags.make
 CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o: /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/RmDisk.cpp
 CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o: CMakeFiles/mia_backend.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o -MF CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o.d -o CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o -c /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/RmDisk.cpp
 
 CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.i: cmake_force
@@ -156,7 +170,7 @@ CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.s: cmake_force
 CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o: CMakeFiles/mia_backend.dir/flags.make
 CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o: /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/FdDisk.cpp
 CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o: CMakeFiles/mia_backend.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o -MF CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o.d -o CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o -c /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/FdDisk.cpp
 
 CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.i: cmake_force
@@ -166,20 +180,6 @@ CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.i: cmake_force
 CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/FdDisk.cpp -o CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.s
-
-CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o: CMakeFiles/mia_backend.dir/flags.make
-CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o: /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/disk/MountManager.cpp
-CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o: CMakeFiles/mia_backend.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o -MF CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o.d -o CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o -c /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/disk/MountManager.cpp
-
-CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/disk/MountManager.cpp > CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.i
-
-CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/disk/MountManager.cpp -o CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.s
 
 CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.o: CMakeFiles/mia_backend.dir/flags.make
 CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.o: /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/MountCmd.cpp
@@ -209,18 +209,63 @@ CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/RepCmd.cpp -o CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.s
 
+CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o: CMakeFiles/mia_backend.dir/flags.make
+CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o: /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/MkFsCmd.cpp
+CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o: CMakeFiles/mia_backend.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o -MF CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o.d -o CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o -c /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/MkFsCmd.cpp
+
+CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/MkFsCmd.cpp > CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.i
+
+CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/commands/MkFsCmd.cpp -o CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.s
+
+CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o: CMakeFiles/mia_backend.dir/flags.make
+CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o: /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/fs/Ext2IO.cpp
+CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o: CMakeFiles/mia_backend.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o -MF CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o.d -o CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o -c /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/fs/Ext2IO.cpp
+
+CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/fs/Ext2IO.cpp > CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.i
+
+CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/fs/Ext2IO.cpp -o CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.s
+
+CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o: CMakeFiles/mia_backend.dir/flags.make
+CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o: /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/fs/Ext2Formatter.cpp
+CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o: CMakeFiles/mia_backend.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o -MF CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o.d -o CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o -c /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/fs/Ext2Formatter.cpp
+
+CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/fs/Ext2Formatter.cpp > CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.i
+
+CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/fs/Ext2Formatter.cpp -o CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.s
+
 # Object files for target mia_backend
 mia_backend_OBJECTS = \
 "CMakeFiles/mia_backend.dir/src/main.cpp.o" \
 "CMakeFiles/mia_backend.dir/src/api/Server.cpp.o" \
 "CMakeFiles/mia_backend.dir/src/parser/CommandRunner.cpp.o" \
 "CMakeFiles/mia_backend.dir/src/disk/BinaryIO.cpp.o" \
+"CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o" \
 "CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o" \
 "CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o" \
 "CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o" \
-"CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o" \
 "CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.o" \
-"CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.o"
+"CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.o" \
+"CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o" \
+"CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o" \
+"CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o"
 
 # External object files for target mia_backend
 mia_backend_EXTERNAL_OBJECTS =
@@ -229,15 +274,18 @@ mia_backend: CMakeFiles/mia_backend.dir/src/main.cpp.o
 mia_backend: CMakeFiles/mia_backend.dir/src/api/Server.cpp.o
 mia_backend: CMakeFiles/mia_backend.dir/src/parser/CommandRunner.cpp.o
 mia_backend: CMakeFiles/mia_backend.dir/src/disk/BinaryIO.cpp.o
+mia_backend: CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o
 mia_backend: CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.o
 mia_backend: CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.o
 mia_backend: CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.o
-mia_backend: CMakeFiles/mia_backend.dir/src/disk/MountManager.cpp.o
 mia_backend: CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.o
 mia_backend: CMakeFiles/mia_backend.dir/src/commands/RepCmd.cpp.o
+mia_backend: CMakeFiles/mia_backend.dir/src/commands/MkFsCmd.cpp.o
+mia_backend: CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.o
+mia_backend: CMakeFiles/mia_backend.dir/src/fs/Ext2Formatter.cpp.o
 mia_backend: CMakeFiles/mia_backend.dir/build.make
 mia_backend: CMakeFiles/mia_backend.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable mia_backend"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/vjr-velasquez/Documentos/mia-proyecto1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable mia_backend"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mia_backend.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
