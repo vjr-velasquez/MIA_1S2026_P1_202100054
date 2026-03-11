@@ -5,6 +5,11 @@
 #include "commands/MountCmd.h"
 #include "commands/RepCmd.h"
 #include "commands/MkFsCmd.h"
+#include "commands/MkDirCmd.h"
+#include "commands/MkFileCmd.h"
+#include "commands/CatCmd.h"
+#include "commands/ChmodCmd.h"
+#include "commands/ChownCmd.h"
 
 
 #include <sstream>
@@ -133,9 +138,30 @@ std::string CommandRunner::run(const std::string& input) {
             MkFsCmd mkfs;
             out << mkfs.exec(t);
         }
+        else if (c == "mkdir") {
+            MkDirCmd md;
+            out << md.exec(t);
+        }
+        else if (c == "mkfile") {
+            MkFileCmd mf;
+            out << mf.exec(t);
+        }
+        else if (c == "cat") {
+            CatCmd cat;
+            out << cat.exec(t);
+        }
+        else if (c == "chmod") {
+            ChmodCmd chmod;
+            out << chmod.exec(t);
+        }
+        else if (c == "chown") {
+            ChownCmd chown;
+            out << chown.exec(t);
+        }
         else {
             out << "ERROR: comando no reconocido -> " << cmd << "\n";
         }
+        
     }
 
     return out.str();

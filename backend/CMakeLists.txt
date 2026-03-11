@@ -19,9 +19,17 @@ add_executable(mia_backend
     src/commands/MountCmd.cpp
     src/commands/RepCmd.cpp
     src/commands/MkFsCmd.cpp
+    src/commands/MkDirCmd.cpp
+    src/commands/MkFileCmd.cpp
+    src/commands/CatCmd.cpp
+    src/commands/ChmodCmd.cpp
+    src/commands/ChownCmd.cpp
 
     src/fs/Ext2IO.cpp
     src/fs/Ext2Formatter.cpp
+    src/fs/Ext2Paths.cpp
+
+
 )
 
 target_include_directories(mia_backend PRIVATE

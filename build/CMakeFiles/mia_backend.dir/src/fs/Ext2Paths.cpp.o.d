@@ -1,7 +1,7 @@
-CMakeFiles/mia_backend.dir/src/parser/CommandRunner.cpp.o: \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/parser/CommandRunner.cpp \
+CMakeFiles/mia_backend.dir/src/fs/Ext2Paths.cpp.o: \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/src/fs/Ext2Paths.cpp \
  /usr/include/stdc-predef.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/parser/CommandRunner.h \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/fs/Ext2Paths.h \
  /usr/include/c++/13/string /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
@@ -116,18 +116,15 @@ CMakeFiles/mia_backend.dir/src/parser/CommandRunner.cpp.o: \
  /usr/include/c++/13/bits/memory_resource.h /usr/include/c++/13/cstddef \
  /usr/include/c++/13/bits/uses_allocator.h \
  /usr/include/c++/13/bits/uses_allocator_args.h /usr/include/c++/13/tuple \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/MkDisk.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/RmDisk.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/FdDisk.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/MountCmd.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/RepCmd.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/MkFsCmd.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/MkDirCmd.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/MkFileCmd.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/CatCmd.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/ChmodCmd.h \
- /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/commands/ChownCmd.h \
- /usr/include/c++/13/sstream /usr/include/c++/13/istream \
+ /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_uninitialized.h \
+ /usr/include/c++/13/bits/stl_vector.h \
+ /usr/include/c++/13/bits/stl_bvector.h \
+ /usr/include/c++/13/bits/vector.tcc /usr/include/c++/13/cstdint \
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/fs/Ext2IO.h \
+ /usr/include/c++/13/fstream /usr/include/c++/13/istream \
  /usr/include/c++/13/ios /usr/include/c++/13/exception \
  /usr/include/c++/13/bits/exception_ptr.h \
  /usr/include/c++/13/bits/cxxabi_init_exception.h \
@@ -163,20 +160,14 @@ CMakeFiles/mia_backend.dir/src/parser/CommandRunner.cpp.o: \
  /usr/include/c++/13/bits/locale_facets.tcc \
  /usr/include/c++/13/bits/basic_ios.tcc /usr/include/c++/13/ostream \
  /usr/include/c++/13/bits/ostream.tcc \
- /usr/include/c++/13/bits/istream.tcc \
- /usr/include/c++/13/bits/sstream.tcc /usr/include/c++/13/algorithm \
- /usr/include/c++/13/bits/stl_algo.h \
- /usr/include/c++/13/bits/algorithmfwd.h \
- /usr/include/c++/13/bits/stl_heap.h \
- /usr/include/c++/13/bits/uniform_int_dist.h \
- /usr/include/c++/13/bits/stl_tempbuf.h \
- /usr/include/c++/13/pstl/glue_algorithm_defs.h \
- /usr/include/c++/13/pstl/execution_defs.h \
- /usr/include/c++/13/unordered_map \
- /usr/include/c++/13/bits/unordered_map.h \
- /usr/include/c++/13/bits/hashtable.h \
- /usr/include/c++/13/bits/hashtable_policy.h \
- /usr/include/c++/13/ext/aligned_buffer.h \
- /usr/include/c++/13/bits/enable_special_members.h \
- /usr/include/c++/13/bits/node_handle.h \
- /usr/include/c++/13/bits/erase_if.h
+ /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/bits/codecvt.h \
+ /usr/include/x86_64-linux-gnu/c++/13/bits/basic_file.h \
+ /usr/include/x86_64-linux-gnu/c++/13/bits/c++io.h \
+ /usr/include/c++/13/bits/fstream.tcc \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/structs/SuperBlock.h \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/structs/Inode.h \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/structs/FolderBlock.h \
+ /home/vjr-velasquez/Documentos/mia-proyecto1/backend/include/structs/FileBlock.h \
+ /usr/include/c++/13/sstream /usr/include/c++/13/bits/sstream.tcc \
+ /usr/include/c++/13/cstring /usr/include/string.h /usr/include/strings.h \
+ /usr/include/c++/13/ctime

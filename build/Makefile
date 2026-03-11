@@ -153,6 +153,78 @@ src/api/Server.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/api/Server.cpp.s
 .PHONY : src/api/Server.cpp.s
 
+src/commands/CatCmd.o: src/commands/CatCmd.cpp.o
+.PHONY : src/commands/CatCmd.o
+
+# target to build an object file
+src/commands/CatCmd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/CatCmd.cpp.o
+.PHONY : src/commands/CatCmd.cpp.o
+
+src/commands/CatCmd.i: src/commands/CatCmd.cpp.i
+.PHONY : src/commands/CatCmd.i
+
+# target to preprocess a source file
+src/commands/CatCmd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/CatCmd.cpp.i
+.PHONY : src/commands/CatCmd.cpp.i
+
+src/commands/CatCmd.s: src/commands/CatCmd.cpp.s
+.PHONY : src/commands/CatCmd.s
+
+# target to generate assembly for a file
+src/commands/CatCmd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/CatCmd.cpp.s
+.PHONY : src/commands/CatCmd.cpp.s
+
+src/commands/ChmodCmd.o: src/commands/ChmodCmd.cpp.o
+.PHONY : src/commands/ChmodCmd.o
+
+# target to build an object file
+src/commands/ChmodCmd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/ChmodCmd.cpp.o
+.PHONY : src/commands/ChmodCmd.cpp.o
+
+src/commands/ChmodCmd.i: src/commands/ChmodCmd.cpp.i
+.PHONY : src/commands/ChmodCmd.i
+
+# target to preprocess a source file
+src/commands/ChmodCmd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/ChmodCmd.cpp.i
+.PHONY : src/commands/ChmodCmd.cpp.i
+
+src/commands/ChmodCmd.s: src/commands/ChmodCmd.cpp.s
+.PHONY : src/commands/ChmodCmd.s
+
+# target to generate assembly for a file
+src/commands/ChmodCmd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/ChmodCmd.cpp.s
+.PHONY : src/commands/ChmodCmd.cpp.s
+
+src/commands/ChownCmd.o: src/commands/ChownCmd.cpp.o
+.PHONY : src/commands/ChownCmd.o
+
+# target to build an object file
+src/commands/ChownCmd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/ChownCmd.cpp.o
+.PHONY : src/commands/ChownCmd.cpp.o
+
+src/commands/ChownCmd.i: src/commands/ChownCmd.cpp.i
+.PHONY : src/commands/ChownCmd.i
+
+# target to preprocess a source file
+src/commands/ChownCmd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/ChownCmd.cpp.i
+.PHONY : src/commands/ChownCmd.cpp.i
+
+src/commands/ChownCmd.s: src/commands/ChownCmd.cpp.s
+.PHONY : src/commands/ChownCmd.s
+
+# target to generate assembly for a file
+src/commands/ChownCmd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/ChownCmd.cpp.s
+.PHONY : src/commands/ChownCmd.cpp.s
+
 src/commands/FdDisk.o: src/commands/FdDisk.cpp.o
 .PHONY : src/commands/FdDisk.o
 
@@ -177,6 +249,30 @@ src/commands/FdDisk.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/FdDisk.cpp.s
 .PHONY : src/commands/FdDisk.cpp.s
 
+src/commands/MkDirCmd.o: src/commands/MkDirCmd.cpp.o
+.PHONY : src/commands/MkDirCmd.o
+
+# target to build an object file
+src/commands/MkDirCmd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkDirCmd.cpp.o
+.PHONY : src/commands/MkDirCmd.cpp.o
+
+src/commands/MkDirCmd.i: src/commands/MkDirCmd.cpp.i
+.PHONY : src/commands/MkDirCmd.i
+
+# target to preprocess a source file
+src/commands/MkDirCmd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkDirCmd.cpp.i
+.PHONY : src/commands/MkDirCmd.cpp.i
+
+src/commands/MkDirCmd.s: src/commands/MkDirCmd.cpp.s
+.PHONY : src/commands/MkDirCmd.s
+
+# target to generate assembly for a file
+src/commands/MkDirCmd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkDirCmd.cpp.s
+.PHONY : src/commands/MkDirCmd.cpp.s
+
 src/commands/MkDisk.o: src/commands/MkDisk.cpp.o
 .PHONY : src/commands/MkDisk.o
 
@@ -200,6 +296,30 @@ src/commands/MkDisk.s: src/commands/MkDisk.cpp.s
 src/commands/MkDisk.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkDisk.cpp.s
 .PHONY : src/commands/MkDisk.cpp.s
+
+src/commands/MkFileCmd.o: src/commands/MkFileCmd.cpp.o
+.PHONY : src/commands/MkFileCmd.o
+
+# target to build an object file
+src/commands/MkFileCmd.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkFileCmd.cpp.o
+.PHONY : src/commands/MkFileCmd.cpp.o
+
+src/commands/MkFileCmd.i: src/commands/MkFileCmd.cpp.i
+.PHONY : src/commands/MkFileCmd.i
+
+# target to preprocess a source file
+src/commands/MkFileCmd.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkFileCmd.cpp.i
+.PHONY : src/commands/MkFileCmd.cpp.i
+
+src/commands/MkFileCmd.s: src/commands/MkFileCmd.cpp.s
+.PHONY : src/commands/MkFileCmd.s
+
+# target to generate assembly for a file
+src/commands/MkFileCmd.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MkFileCmd.cpp.s
+.PHONY : src/commands/MkFileCmd.cpp.s
 
 src/commands/MkFsCmd.o: src/commands/MkFsCmd.cpp.o
 .PHONY : src/commands/MkFsCmd.o
@@ -393,6 +513,30 @@ src/fs/Ext2IO.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2IO.cpp.s
 .PHONY : src/fs/Ext2IO.cpp.s
 
+src/fs/Ext2Paths.o: src/fs/Ext2Paths.cpp.o
+.PHONY : src/fs/Ext2Paths.o
+
+# target to build an object file
+src/fs/Ext2Paths.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2Paths.cpp.o
+.PHONY : src/fs/Ext2Paths.cpp.o
+
+src/fs/Ext2Paths.i: src/fs/Ext2Paths.cpp.i
+.PHONY : src/fs/Ext2Paths.i
+
+# target to preprocess a source file
+src/fs/Ext2Paths.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2Paths.cpp.i
+.PHONY : src/fs/Ext2Paths.cpp.i
+
+src/fs/Ext2Paths.s: src/fs/Ext2Paths.cpp.s
+.PHONY : src/fs/Ext2Paths.s
+
+# target to generate assembly for a file
+src/fs/Ext2Paths.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2Paths.cpp.s
+.PHONY : src/fs/Ext2Paths.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -453,12 +597,27 @@ help:
 	@echo "... src/api/Server.o"
 	@echo "... src/api/Server.i"
 	@echo "... src/api/Server.s"
+	@echo "... src/commands/CatCmd.o"
+	@echo "... src/commands/CatCmd.i"
+	@echo "... src/commands/CatCmd.s"
+	@echo "... src/commands/ChmodCmd.o"
+	@echo "... src/commands/ChmodCmd.i"
+	@echo "... src/commands/ChmodCmd.s"
+	@echo "... src/commands/ChownCmd.o"
+	@echo "... src/commands/ChownCmd.i"
+	@echo "... src/commands/ChownCmd.s"
 	@echo "... src/commands/FdDisk.o"
 	@echo "... src/commands/FdDisk.i"
 	@echo "... src/commands/FdDisk.s"
+	@echo "... src/commands/MkDirCmd.o"
+	@echo "... src/commands/MkDirCmd.i"
+	@echo "... src/commands/MkDirCmd.s"
 	@echo "... src/commands/MkDisk.o"
 	@echo "... src/commands/MkDisk.i"
 	@echo "... src/commands/MkDisk.s"
+	@echo "... src/commands/MkFileCmd.o"
+	@echo "... src/commands/MkFileCmd.i"
+	@echo "... src/commands/MkFileCmd.s"
 	@echo "... src/commands/MkFsCmd.o"
 	@echo "... src/commands/MkFsCmd.i"
 	@echo "... src/commands/MkFsCmd.s"
@@ -483,6 +642,9 @@ help:
 	@echo "... src/fs/Ext2IO.o"
 	@echo "... src/fs/Ext2IO.i"
 	@echo "... src/fs/Ext2IO.s"
+	@echo "... src/fs/Ext2Paths.o"
+	@echo "... src/fs/Ext2Paths.i"
+	@echo "... src/fs/Ext2Paths.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
