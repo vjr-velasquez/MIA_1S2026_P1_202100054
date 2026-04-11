@@ -225,6 +225,30 @@ src/commands/ChownCmd.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/ChownCmd.cpp.s
 .PHONY : src/commands/ChownCmd.cpp.s
 
+src/commands/Ext3Cmds.o: src/commands/Ext3Cmds.cpp.o
+.PHONY : src/commands/Ext3Cmds.o
+
+# target to build an object file
+src/commands/Ext3Cmds.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/Ext3Cmds.cpp.o
+.PHONY : src/commands/Ext3Cmds.cpp.o
+
+src/commands/Ext3Cmds.i: src/commands/Ext3Cmds.cpp.i
+.PHONY : src/commands/Ext3Cmds.i
+
+# target to preprocess a source file
+src/commands/Ext3Cmds.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/Ext3Cmds.cpp.i
+.PHONY : src/commands/Ext3Cmds.cpp.i
+
+src/commands/Ext3Cmds.s: src/commands/Ext3Cmds.cpp.s
+.PHONY : src/commands/Ext3Cmds.s
+
+# target to generate assembly for a file
+src/commands/Ext3Cmds.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/Ext3Cmds.cpp.s
+.PHONY : src/commands/Ext3Cmds.cpp.s
+
 src/commands/FdDisk.o: src/commands/FdDisk.cpp.o
 .PHONY : src/commands/FdDisk.o
 
@@ -369,6 +393,30 @@ src/commands/MountCmd.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/MountCmd.cpp.s
 .PHONY : src/commands/MountCmd.cpp.s
 
+src/commands/Project2Cmds.o: src/commands/Project2Cmds.cpp.o
+.PHONY : src/commands/Project2Cmds.o
+
+# target to build an object file
+src/commands/Project2Cmds.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/Project2Cmds.cpp.o
+.PHONY : src/commands/Project2Cmds.cpp.o
+
+src/commands/Project2Cmds.i: src/commands/Project2Cmds.cpp.i
+.PHONY : src/commands/Project2Cmds.i
+
+# target to preprocess a source file
+src/commands/Project2Cmds.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/Project2Cmds.cpp.i
+.PHONY : src/commands/Project2Cmds.cpp.i
+
+src/commands/Project2Cmds.s: src/commands/Project2Cmds.cpp.s
+.PHONY : src/commands/Project2Cmds.s
+
+# target to generate assembly for a file
+src/commands/Project2Cmds.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/Project2Cmds.cpp.s
+.PHONY : src/commands/Project2Cmds.cpp.s
+
 src/commands/RepCmd.o: src/commands/RepCmd.cpp.o
 .PHONY : src/commands/RepCmd.o
 
@@ -416,6 +464,30 @@ src/commands/RmDisk.s: src/commands/RmDisk.cpp.s
 src/commands/RmDisk.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/RmDisk.cpp.s
 .PHONY : src/commands/RmDisk.cpp.s
+
+src/commands/UserSessionCmds.o: src/commands/UserSessionCmds.cpp.o
+.PHONY : src/commands/UserSessionCmds.o
+
+# target to build an object file
+src/commands/UserSessionCmds.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/UserSessionCmds.cpp.o
+.PHONY : src/commands/UserSessionCmds.cpp.o
+
+src/commands/UserSessionCmds.i: src/commands/UserSessionCmds.cpp.i
+.PHONY : src/commands/UserSessionCmds.i
+
+# target to preprocess a source file
+src/commands/UserSessionCmds.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/UserSessionCmds.cpp.i
+.PHONY : src/commands/UserSessionCmds.cpp.i
+
+src/commands/UserSessionCmds.s: src/commands/UserSessionCmds.cpp.s
+.PHONY : src/commands/UserSessionCmds.s
+
+# target to generate assembly for a file
+src/commands/UserSessionCmds.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/commands/UserSessionCmds.cpp.s
+.PHONY : src/commands/UserSessionCmds.cpp.s
 
 src/disk/BinaryIO.o: src/disk/BinaryIO.cpp.o
 .PHONY : src/disk/BinaryIO.o
@@ -537,6 +609,54 @@ src/fs/Ext2Paths.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/Ext2Paths.cpp.s
 .PHONY : src/fs/Ext2Paths.cpp.s
 
+src/fs/FsFileOps.o: src/fs/FsFileOps.cpp.o
+.PHONY : src/fs/FsFileOps.o
+
+# target to build an object file
+src/fs/FsFileOps.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/FsFileOps.cpp.o
+.PHONY : src/fs/FsFileOps.cpp.o
+
+src/fs/FsFileOps.i: src/fs/FsFileOps.cpp.i
+.PHONY : src/fs/FsFileOps.i
+
+# target to preprocess a source file
+src/fs/FsFileOps.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/FsFileOps.cpp.i
+.PHONY : src/fs/FsFileOps.cpp.i
+
+src/fs/FsFileOps.s: src/fs/FsFileOps.cpp.s
+.PHONY : src/fs/FsFileOps.s
+
+# target to generate assembly for a file
+src/fs/FsFileOps.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/FsFileOps.cpp.s
+.PHONY : src/fs/FsFileOps.cpp.s
+
+src/fs/JournalManager.o: src/fs/JournalManager.cpp.o
+.PHONY : src/fs/JournalManager.o
+
+# target to build an object file
+src/fs/JournalManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/JournalManager.cpp.o
+.PHONY : src/fs/JournalManager.cpp.o
+
+src/fs/JournalManager.i: src/fs/JournalManager.cpp.i
+.PHONY : src/fs/JournalManager.i
+
+# target to preprocess a source file
+src/fs/JournalManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/JournalManager.cpp.i
+.PHONY : src/fs/JournalManager.cpp.i
+
+src/fs/JournalManager.s: src/fs/JournalManager.cpp.s
+.PHONY : src/fs/JournalManager.s
+
+# target to generate assembly for a file
+src/fs/JournalManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/fs/JournalManager.cpp.s
+.PHONY : src/fs/JournalManager.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -585,6 +705,30 @@ src/parser/CommandRunner.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/parser/CommandRunner.cpp.s
 .PHONY : src/parser/CommandRunner.cpp.s
 
+src/session/SessionManager.o: src/session/SessionManager.cpp.o
+.PHONY : src/session/SessionManager.o
+
+# target to build an object file
+src/session/SessionManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/session/SessionManager.cpp.o
+.PHONY : src/session/SessionManager.cpp.o
+
+src/session/SessionManager.i: src/session/SessionManager.cpp.i
+.PHONY : src/session/SessionManager.i
+
+# target to preprocess a source file
+src/session/SessionManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/session/SessionManager.cpp.i
+.PHONY : src/session/SessionManager.cpp.i
+
+src/session/SessionManager.s: src/session/SessionManager.cpp.s
+.PHONY : src/session/SessionManager.s
+
+# target to generate assembly for a file
+src/session/SessionManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mia_backend.dir/build.make CMakeFiles/mia_backend.dir/src/session/SessionManager.cpp.s
+.PHONY : src/session/SessionManager.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -606,6 +750,9 @@ help:
 	@echo "... src/commands/ChownCmd.o"
 	@echo "... src/commands/ChownCmd.i"
 	@echo "... src/commands/ChownCmd.s"
+	@echo "... src/commands/Ext3Cmds.o"
+	@echo "... src/commands/Ext3Cmds.i"
+	@echo "... src/commands/Ext3Cmds.s"
 	@echo "... src/commands/FdDisk.o"
 	@echo "... src/commands/FdDisk.i"
 	@echo "... src/commands/FdDisk.s"
@@ -624,12 +771,18 @@ help:
 	@echo "... src/commands/MountCmd.o"
 	@echo "... src/commands/MountCmd.i"
 	@echo "... src/commands/MountCmd.s"
+	@echo "... src/commands/Project2Cmds.o"
+	@echo "... src/commands/Project2Cmds.i"
+	@echo "... src/commands/Project2Cmds.s"
 	@echo "... src/commands/RepCmd.o"
 	@echo "... src/commands/RepCmd.i"
 	@echo "... src/commands/RepCmd.s"
 	@echo "... src/commands/RmDisk.o"
 	@echo "... src/commands/RmDisk.i"
 	@echo "... src/commands/RmDisk.s"
+	@echo "... src/commands/UserSessionCmds.o"
+	@echo "... src/commands/UserSessionCmds.i"
+	@echo "... src/commands/UserSessionCmds.s"
 	@echo "... src/disk/BinaryIO.o"
 	@echo "... src/disk/BinaryIO.i"
 	@echo "... src/disk/BinaryIO.s"
@@ -645,12 +798,21 @@ help:
 	@echo "... src/fs/Ext2Paths.o"
 	@echo "... src/fs/Ext2Paths.i"
 	@echo "... src/fs/Ext2Paths.s"
+	@echo "... src/fs/FsFileOps.o"
+	@echo "... src/fs/FsFileOps.i"
+	@echo "... src/fs/FsFileOps.s"
+	@echo "... src/fs/JournalManager.o"
+	@echo "... src/fs/JournalManager.i"
+	@echo "... src/fs/JournalManager.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
 	@echo "... src/parser/CommandRunner.o"
 	@echo "... src/parser/CommandRunner.i"
 	@echo "... src/parser/CommandRunner.s"
+	@echo "... src/session/SessionManager.o"
+	@echo "... src/session/SessionManager.i"
+	@echo "... src/session/SessionManager.s"
 .PHONY : help
 
 

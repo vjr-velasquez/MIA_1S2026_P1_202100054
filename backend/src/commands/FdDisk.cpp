@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstring>
+#include <vector>
 
 static inline std::string trim(const std::string& s) {
     size_t start = s.find_first_not_of(" \t\r\n");
@@ -111,18 +112,164 @@ static bool logical_name_exists(const std::string& path, const Partition& ext, c
     return false;
 }
 
+static void zero_region(const std::string& path, int64_t start, int64_t size) {
+    if (size <= 0) return;
+    std::vector<char> zeros(static_cast<size_t>(size), '\0');
+    BinaryIO::writeAt(path, start, zeros.data(), zeros.size());
+}
+
 std::string FdDisk::exec(const std::string& line) {
     std::ostringstream out;
     auto params = parse_params_local(line);
 
-    // obligatorios
     if (!params.count("path")) return "ERROR: fdisk -> falta -path\n";
     if (!params.count("name")) return "ERROR: fdisk -> falta -name\n";
-    if (!params.count("size")) return "ERROR: fdisk -> falta -size\n";
 
     std::string path = params["path"];
     std::string name = params["name"];
     if (name.size() > 16) return "ERROR: fdisk -> -name máximo 16 caracteres\n";
+
+    // Leer MBR
+    MBR mbr{};
+    if (!BinaryIO::readAt0(path, &mbr, sizeof(MBR))) {
+        return "ERROR: fdisk -> no se pudo leer el MBR (¿path correcto?)\n";
+    }
+
+    // ====== DELETE ======
+    if (params.count("delete")) {
+        const std::string mode = tolower_str(params["delete"]);
+        if (!(mode == "fast" || mode == "full")) {
+            return "ERROR: fdisk -> -delete debe ser fast o full\n";
+        }
+
+        for (int i = 0; i < 4; ++i) {
+            auto& part = mbr.mbr_partitions[i];
+            if (!is_used(part) || !name_equals(part.part_name, name)) continue;
+
+            if (mode == "full") zero_region(path, part.part_start, part.part_size);
+            part = Partition{};
+            part.part_start = -1;
+            if (!BinaryIO::writeAt0(path, &mbr, sizeof(MBR))) {
+                return "ERROR: fdisk -> no se pudo escribir el MBR\n";
+            }
+            return "OK: fdisk -> partición eliminada: " + name + "\n";
+        }
+
+        Partition ext{};
+        if (!get_extended(mbr, ext)) return "ERROR: fdisk -> no existe la partición\n";
+
+        int32_t ext_start = ext.part_start;
+        int32_t off = ext_start;
+        int32_t prevOff = -1;
+        EBR cur{};
+
+        while (off >= ext_start && off < ext.part_start + ext.part_size) {
+            if (!BinaryIO::readAt(path, off, &cur, sizeof(EBR))) break;
+            if (cur.part_status == '1' && name_equals(cur.part_name, name)) {
+                if (mode == "full") zero_region(path, off, sizeof(EBR) + cur.part_size);
+
+                if (prevOff == -1) {
+                    if (cur.part_next == -1) {
+                        EBR empty{};
+                        empty.part_status = '0';
+                        empty.part_fit = ext.part_fit;
+                        empty.part_start = ext_start + static_cast<int32_t>(sizeof(EBR));
+                        empty.part_size = 0;
+                        empty.part_next = -1;
+                        std::memset(empty.part_name, 0, 16);
+                        BinaryIO::writeAt(path, ext_start, &empty, sizeof(EBR));
+                    } else {
+                        EBR next{};
+                        if (!BinaryIO::readAt(path, cur.part_next, &next, sizeof(EBR))) {
+                            return "ERROR: fdisk -> no se pudo reencadenar la lógica\n";
+                        }
+                        BinaryIO::writeAt(path, ext_start, &next, sizeof(EBR));
+                    }
+                } else {
+                    EBR prev{};
+                    if (!BinaryIO::readAt(path, prevOff, &prev, sizeof(EBR))) {
+                        return "ERROR: fdisk -> no se pudo leer EBR anterior\n";
+                    }
+                    prev.part_next = cur.part_next;
+                    BinaryIO::writeAt(path, prevOff, &prev, sizeof(EBR));
+                }
+                return "OK: fdisk -> partición eliminada: " + name + "\n";
+            }
+            if (cur.part_next == -1) break;
+            prevOff = off;
+            off = cur.part_next;
+        }
+
+        return "ERROR: fdisk -> no existe la partición\n";
+    }
+
+    // ====== ADD ======
+    if (params.count("add")) {
+        int addNum = 0;
+        try { addNum = std::stoi(params["add"]); }
+        catch (...) { return "ERROR: fdisk -> -add inválido\n"; }
+        if (addNum == 0) return "ERROR: fdisk -> -add no puede ser 0\n";
+
+        char unit = 'K';
+        if (params.count("unit") && !params["unit"].empty()) unit = params["unit"][0];
+        unit = (char)std::toupper((unsigned char)unit);
+
+        int32_t delta = 0;
+        if (unit == 'K') delta = addNum * 1024;
+        else if (unit == 'M') delta = addNum * 1024 * 1024;
+        else return "ERROR: fdisk -> -unit debe ser K o M\n";
+
+        for (int i = 0; i < 4; ++i) {
+            auto& part = mbr.mbr_partitions[i];
+            if (!is_used(part) || !name_equals(part.part_name, name)) continue;
+
+            int32_t limit = mbr.mbr_tamano;
+            for (int j = 0; j < 4; ++j) {
+                const auto& other = mbr.mbr_partitions[j];
+                if (!is_used(other) || other.part_start <= part.part_start) continue;
+                limit = std::min(limit, other.part_start);
+            }
+
+            int32_t newSize = part.part_size + delta;
+            if (newSize <= 0) return "ERROR: fdisk -> el tamaño resultante sería inválido\n";
+            if (part.part_start + newSize > limit) return "ERROR: fdisk -> no hay espacio libre después de la partición\n";
+
+            part.part_size = newSize;
+            if (!BinaryIO::writeAt0(path, &mbr, sizeof(MBR))) {
+                return "ERROR: fdisk -> no se pudo escribir el MBR\n";
+            }
+            return "OK: fdisk -> tamaño ajustado: " + name + "\n";
+        }
+
+        Partition ext{};
+        if (!get_extended(mbr, ext)) return "ERROR: fdisk -> no existe la partición\n";
+        int32_t ext_end = ext.part_start + ext.part_size;
+        int32_t off = ext.part_start;
+        while (off >= ext.part_start && off < ext_end) {
+            EBR cur{};
+            if (!BinaryIO::readAt(path, off, &cur, sizeof(EBR))) break;
+
+            if (cur.part_status == '1' && name_equals(cur.part_name, name)) {
+                int32_t limit = (cur.part_next == -1) ? ext_end : cur.part_next;
+                int32_t newSize = cur.part_size + delta;
+                if (newSize <= 0) return "ERROR: fdisk -> el tamaño resultante sería inválido\n";
+                if (cur.part_start + newSize > limit) return "ERROR: fdisk -> no hay espacio libre después de la partición\n";
+                cur.part_size = newSize;
+                if (!BinaryIO::writeAt(path, off, &cur, sizeof(EBR))) {
+                    return "ERROR: fdisk -> no se pudo actualizar la partición lógica\n";
+                }
+                return "OK: fdisk -> tamaño ajustado: " + name + "\n";
+            }
+
+            if (cur.part_next == -1) break;
+            off = cur.part_next;
+        }
+
+        return "ERROR: fdisk -> no existe la partición\n";
+    }
+
+    // obligatorios al crear
+    if (!params.count("size")) return "ERROR: fdisk -> falta -size\n";
 
     int size_num = 0;
     try { size_num = std::stoi(params["size"]); }
@@ -149,12 +296,6 @@ std::string FdDisk::exec(const std::string& line) {
     if (params.count("fit") && !params["fit"].empty()) fit = params["fit"][0];
     fit = (char)std::toupper((unsigned char)fit);
     if (!(fit == 'B' || fit == 'F' || fit == 'W')) return "ERROR: fdisk -> -fit debe ser B, F o W\n";
-
-    // Leer MBR
-    MBR mbr{};
-    if (!BinaryIO::readAt0(path, &mbr, sizeof(MBR))) {
-        return "ERROR: fdisk -> no se pudo leer el MBR (¿path correcto?)\n";
-    }
 
     // Validar nombre no repetido en MBR
     for (int i = 0; i < 4; i++) {

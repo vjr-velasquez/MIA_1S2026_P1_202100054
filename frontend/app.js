@@ -1,5 +1,7 @@
 function $(id) { return document.getElementById(id); }
 
+const EXAMPLE_BASE_PATH = "/home/vjr-velasquez/Documentos/mia-proyecto1/outputs";
+
 function appendOutput(text) {
   const out = $("outputArea");
   out.value += text;
@@ -65,13 +67,13 @@ function loadExample() {
   const example =
 `# Script ejemplo Sprint 3
 
-mkdisk -size=10 -unit=M -path="/tmp/mia/d1.mia"
-fdisk -size=6 -unit=M -path="/tmp/mia/d1.mia" -name="EXT" -type=E
-fdisk -size=1 -unit=M -path="/tmp/mia/d1.mia" -name="log1" -type=L
-fdisk -size=1 -unit=M -path="/tmp/mia/d1.mia" -name="log2" -type=L
-mount -path="/tmp/mia/d1.mia" -name="EXT"
-rep -name=disk -id=vda1 -path="/tmp/mia/reports/disk.txt"
-rep -name=mbr  -id=vda1 -path="/tmp/mia/reports/mbr.txt"
+mkdisk -size=10 -unit=M -path="${EXAMPLE_BASE_PATH}/disks/d1.mia"
+fdisk -size=6 -unit=M -path="${EXAMPLE_BASE_PATH}/disks/d1.mia" -name="EXT" -type=E
+fdisk -size=1 -unit=M -path="${EXAMPLE_BASE_PATH}/disks/d1.mia" -name="log1" -type=L
+fdisk -size=1 -unit=M -path="${EXAMPLE_BASE_PATH}/disks/d1.mia" -name="log2" -type=L
+mount -path="${EXAMPLE_BASE_PATH}/disks/d1.mia" -name="EXT"
+rep -name=disk -id=vda1 -path="${EXAMPLE_BASE_PATH}/reports/disk.txt"
+rep -name=mbr  -id=vda1 -path="${EXAMPLE_BASE_PATH}/reports/mbr.txt"
 
 # Fin
 `;

@@ -65,6 +65,13 @@ std::string MkFsCmd::exec(const std::string& line) {
     }
 
     std::string id = params["id"];
+    int fsType = 2;
+    if (params.count("fs")) {
+        std::string fs = tolower_str(params["fs"]);
+        if (fs == "2fs") fsType = 2;
+        else if (fs == "3fs") fsType = 3;
+        else return "ERROR: mkfs -> -fs debe ser 2fs o 3fs\n";
+    }
 
     MountEntry mounted;
     if (!MountManager::instance().getById(id, mounted)) {
@@ -72,5 +79,5 @@ std::string MkFsCmd::exec(const std::string& line) {
     }
 
     Ext2Formatter formatter;
-    return formatter.format(mounted.path, mounted.start, mounted.size);
+    return formatter.format(mounted.path, mounted.start, mounted.size, fsType);
 }

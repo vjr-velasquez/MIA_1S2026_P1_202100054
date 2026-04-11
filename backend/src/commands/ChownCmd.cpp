@@ -1,11 +1,15 @@
 #include "commands/ChownCmd.h"
 #include "disk/MountManager.h"
 #include "fs/Ext2Paths.h"
+#include "fs/FsFileOps.h"
+#include "fs/JournalManager.h"
+#include "session/SessionManager.h"
 
 #include <algorithm>
 #include <cctype>
 #include <cstdint>
 #include <ctime>
+#include <functional>
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -90,52 +94,74 @@ namespace {
         return p;
     }
 
-    static bool is_int(const std::string& v) {
-        if (v.empty()) return false;
-        size_t start = (v[0] == '-') ? 1 : 0;
-        if (start >= v.size()) return false;
-        for (size_t i = start; i < v.size(); ++i) {
-            if (!std::isdigit(static_cast<unsigned char>(v[i]))) return false;
+    struct UserInfo {
+        int uid = -1;
+        int gid = -1;
+        std::string user;
+    };
+
+    static std::vector<std::string> split_csv(const std::string& line) {
+        std::vector<std::string> cols;
+        std::stringstream ss(line);
+        std::string item;
+        while (std::getline(ss, item, ',')) cols.push_back(trim(item));
+        return cols;
+    }
+
+    static bool load_user_info(Ext2Paths& fs, const SuperBlock& sb, const std::string& username, UserInfo& out) {
+        std::string content;
+        if (!FsFileOps::readFile(fs, sb, "/users.txt", content, nullptr)) return false;
+
+        std::unordered_map<std::string, int> groups;
+        std::istringstream in(content);
+        std::string line;
+        while (std::getline(in, line)) {
+            auto cols = split_csv(line);
+            if (cols.size() == 3 && cols[1] == "G" && cols[0] != "0") {
+                groups[cols[2]] = std::stoi(cols[0]);
+            }
         }
-        return true;
+
+        in.clear();
+        in.seekg(0);
+        while (std::getline(in, line)) {
+            auto cols = split_csv(line);
+            if (cols.size() == 5 && cols[1] == "U" && cols[0] != "0" && cols[3] == username) {
+                out.uid = std::stoi(cols[0]);
+                out.user = cols[3];
+                auto it = groups.find(cols[2]);
+                out.gid = (it != groups.end()) ? it->second : -1;
+                return true;
+            }
+        }
+        return false;
     }
 }
 
 std::string ChownCmd::exec(const std::string& line) {
     auto params = parse_params(line);
 
-    if (!params.count("id"))   return "ERROR: chown -> falta -id\n";
     if (!params.count("path")) return "ERROR: chown -> falta -path\n";
-    if (!params.count("uid"))  return "ERROR: chown -> falta -uid\n";
+    if (!params.count("uid") && !params.count("usuario"))  return "ERROR: chown -> falta -usuario\n";
 
-    const std::string id = params["id"];
+    std::string id;
+    if (params.count("id")) id = params["id"];
+    else if (SessionManager::instance().isActive()) id = SessionManager::instance().current().id;
+    else return "ERROR: chown -> falta -id\n";
+
     const std::string path = params["path"];
-    const std::string uidRaw = params["uid"];
-    const bool hasGid = params.count("gid");
-    const std::string gidRaw = hasGid ? params["gid"] : "";
+    const bool recursive = params.count("r") && params["r"] == "true";
 
     if (path.empty() || path[0] != '/') {
         return "ERROR: chown -> -path debe ser absoluta e iniciar con '/'\n";
-    }
-    if (!is_int(uidRaw)) {
-        return "ERROR: chown -> -uid inválido\n";
-    }
-    if (hasGid && !is_int(gidRaw)) {
-        return "ERROR: chown -> -gid inválido\n";
-    }
-
-    int uid = 0;
-    int gid = 0;
-    try {
-        uid = std::stoi(uidRaw);
-        gid = hasGid ? std::stoi(gidRaw) : 0;
-    } catch (...) {
-        return "ERROR: chown -> uid/gid inválidos\n";
     }
 
     MountEntry mounted;
     if (!MountManager::instance().getById(id, mounted)) {
         return "ERROR: chown -> no existe montaje con id=" + id + "\n";
+    }
+    if (!SessionManager::instance().isActive() || SessionManager::instance().current().id != id) {
+        return "ERROR: chown -> requiere una sesión activa sobre la partición\n";
     }
 
     Ext2Paths fs(mounted.path, mounted.start);
@@ -149,15 +175,45 @@ std::string ChownCmd::exec(const std::string& line) {
         return "ERROR: chown -> no existe: " + path + "\n";
     }
 
-    Inode inode = fs.readInode(sb, inodeIdx);
-    inode.i_uid = uid;
-    if (hasGid) inode.i_gid = gid;
-    inode.i_mtime = static_cast<int64_t>(std::time(nullptr));
-    fs.writeInode(sb, inodeIdx, inode);
+    UserInfo targetUser{};
+    if (params.count("usuario")) {
+        if (!load_user_info(fs, sb, params["usuario"], targetUser)) {
+            return "ERROR: chown -> no existe el usuario\n";
+        }
+    } else {
+        targetUser.uid = std::stoi(params["uid"]);
+        targetUser.gid = params.count("gid") ? std::stoi(params["gid"]) : -1;
+        targetUser.user = std::to_string(targetUser.uid);
+    }
 
-    const int outGid = hasGid ? gid : inode.i_gid;
+    const auto& session = SessionManager::instance().current();
+    std::function<bool(int32_t)> applyOwner = [&](int32_t idx) {
+        Inode inode = fs.readInode(sb, idx);
+        if (session.username != "root" && inode.i_uid != session.uid) {
+            return false;
+        }
+
+        inode.i_uid = targetUser.uid;
+        if (targetUser.gid >= 0) inode.i_gid = targetUser.gid;
+        inode.i_mtime = static_cast<int64_t>(std::time(nullptr));
+        fs.writeInode(sb, idx, inode);
+
+        if (!recursive || inode.i_type != '0') return true;
+        auto entries = fs.listDirectory(sb, idx);
+        for (const auto& entry : entries) {
+            if (entry.name == "." || entry.name == "..") continue;
+            applyOwner(entry.inodeIndex);
+        }
+        return true;
+    };
+
+    if (!applyOwner(inodeIdx)) {
+        return "ERROR: chown -> permisos insuficientes\n";
+    }
+
     std::ostringstream out;
+    JournalManager::append(mounted.path, mounted.start, sb, "chown", path, targetUser.user);
     out << "OK: chown -> propietario actualizado: " << path
-        << " uid=" << uid << " gid=" << outGid << "\n";
+        << " uid=" << targetUser.uid << " gid=" << targetUser.gid << "\n";
     return out.str();
 }

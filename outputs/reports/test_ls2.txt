@@ -1,0 +1,4 @@
+name | inode | type | perm
+. | 3 | 0 | 664
+.. | 2 | 0 | 664
+a.txt | 4 | 1 | 664

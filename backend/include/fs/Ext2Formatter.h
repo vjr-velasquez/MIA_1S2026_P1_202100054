@@ -10,10 +10,10 @@ public:
 
     // Formatea una partición en diskPath, iniciando en partStart y con tamaño partSize
     // Devuelve mensaje listo para imprimir: OK: ... o ERROR: ...
-    std::string format(const std::string& diskPath, int64_t partStart, int64_t partSize);
+    std::string format(const std::string& diskPath, int64_t partStart, int64_t partSize, int fsType = 2);
 
 private:
-    int calculateN(int64_t partSize) const;
+    int calculateN(int64_t partSize, int fsType) const;
 };
 
 #endif

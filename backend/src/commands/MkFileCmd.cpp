@@ -1,6 +1,8 @@
 #include "commands/MkFileCmd.h"
 #include "disk/MountManager.h"
 #include "fs/Ext2Paths.h"
+#include "fs/JournalManager.h"
+#include "session/SessionManager.h"
 
 #include <algorithm>
 #include <cctype>
@@ -106,10 +108,13 @@ namespace {
 std::string MkFileCmd::exec(const std::string& line) {
     auto params = parse_params(line);
 
-    if (!params.count("id"))   return "ERROR: mkfile -> falta -id\n";
     if (!params.count("path")) return "ERROR: mkfile -> falta -path\n";
 
-    const std::string id = params["id"];
+    std::string id;
+    if (params.count("id")) id = params["id"];
+    else if (SessionManager::instance().isActive()) id = SessionManager::instance().current().id;
+    else return "ERROR: mkfile -> falta -id\n";
+
     const std::string path = params["path"];
     const std::string content = params.count("cont") ? params["cont"] : "";
 
@@ -225,5 +230,6 @@ std::string MkFileCmd::exec(const std::string& line) {
     }
 
     fs.writeSuper(sb);
+    JournalManager::append(mounted.path, mounted.start, sb, "mkfile", path, content);
     return "OK: mkfile -> archivo creado: " + path + "\n";
 }

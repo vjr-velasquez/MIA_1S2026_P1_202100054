@@ -1,6 +1,8 @@
 #include "commands/MkDirCmd.h"
 #include "disk/MountManager.h"
 #include "fs/Ext2Paths.h"
+#include "fs/JournalManager.h"
+#include "session/SessionManager.h"
 
 #include <sstream>
 #include <unordered_map>
@@ -66,10 +68,13 @@ namespace {
 std::string MkDirCmd::exec(const std::string& line) {
     auto params = parse_params(line);
 
-    if (!params.count("id"))   return "ERROR: mkdir -> falta -id\n";
     if (!params.count("path")) return "ERROR: mkdir -> falta -path\n";
 
-    const std::string id = params["id"];
+    std::string id;
+    if (params.count("id")) id = params["id"];
+    else if (SessionManager::instance().isActive()) id = SessionManager::instance().current().id;
+    else return "ERROR: mkdir -> falta -id\n";
+
     const std::string path = params["path"];
     const bool pflag = params.count("p") && params["p"] == "true";
 
@@ -165,5 +170,7 @@ std::string MkDirCmd::exec(const std::string& line) {
         current = newInodeIdx;
     }
 
+    fs.writeSuper(sb);
+    JournalManager::append(mounted.path, mounted.start, sb, "mkdir", path, pflag ? "-p" : "");
     return "OK: mkdir -> carpeta creada: " + path + "\n";
 }

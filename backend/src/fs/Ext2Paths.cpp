@@ -203,3 +203,108 @@ bool Ext2Paths::addDirEntry(SuperBlock& sb, int32_t parentInodeIndex, const std:
 
     return true;
 }
+
+std::vector<DirEntryRef> Ext2Paths::listDirectory(const SuperBlock& sb, int32_t dirInodeIndex) {
+    std::vector<DirEntryRef> entries;
+    Inode dir = readInode(sb, dirInodeIndex);
+    if (dir.i_type != '0') return entries;
+
+    for (int b = 0; b < 12; ++b) {
+        if (dir.i_block[b] < 0) continue;
+
+        FolderBlock fb = readFolderBlock(sb, dir.i_block[b]);
+        for (int i = 0; i < 4; ++i) {
+            if (fb.b_content[i].b_inodo < 0) continue;
+
+            char tmp[12];
+            std::memset(tmp, 0, sizeof(tmp));
+            std::memcpy(tmp, fb.b_content[i].b_name, 11);
+            std::string entryName(tmp);
+            if (entryName.empty()) continue;
+
+            entries.push_back({entryName, fb.b_content[i].b_inodo, b, i});
+        }
+    }
+
+    return entries;
+}
+
+bool Ext2Paths::removeDirEntry(const SuperBlock& sb, int32_t parentInodeIndex, const std::string& name) {
+    Inode parent = readInode(sb, parentInodeIndex);
+    if (parent.i_type != '0') return false;
+
+    for (int b = 0; b < 12; ++b) {
+        if (parent.i_block[b] < 0) continue;
+
+        FolderBlock fb = readFolderBlock(sb, parent.i_block[b]);
+        for (int i = 0; i < 4; ++i) {
+            if (fb.b_content[i].b_inodo < 0) continue;
+
+            char tmp[12];
+            std::memset(tmp, 0, sizeof(tmp));
+            std::memcpy(tmp, fb.b_content[i].b_name, 11);
+            if (std::string(tmp) != name) continue;
+
+            fb.b_content[i].b_inodo = -1;
+            fb.b_content[i].b_name[0] = '\0';
+            writeFolderBlock(sb, parent.i_block[b], fb);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Ext2Paths::renameDirEntry(const SuperBlock& sb, int32_t parentInodeIndex, const std::string& oldName, const std::string& newName) {
+    if (!validName(newName)) return false;
+
+    Inode parent = readInode(sb, parentInodeIndex);
+    if (parent.i_type != '0') return false;
+
+    for (int b = 0; b < 12; ++b) {
+        if (parent.i_block[b] < 0) continue;
+
+        FolderBlock fb = readFolderBlock(sb, parent.i_block[b]);
+        for (int i = 0; i < 4; ++i) {
+            if (fb.b_content[i].b_inodo < 0) continue;
+
+            char tmp[12];
+            std::memset(tmp, 0, sizeof(tmp));
+            std::memcpy(tmp, fb.b_content[i].b_name, 11);
+            if (std::string(tmp) != oldName) continue;
+
+            setName12(fb.b_content[i].b_name, newName);
+            writeFolderBlock(sb, parent.i_block[b], fb);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Ext2Paths::freeInode(SuperBlock& sb, int32_t inodeIndex) {
+    if (inodeIndex < 0 || inodeIndex >= sb.s_inodes_count) return false;
+
+    Inode empty{};
+    for (int i = 0; i < 15; ++i) empty.i_block[i] = -1;
+    empty.i_uid = -1;
+    empty.i_gid = -1;
+    empty.i_type = '0';
+    writeInode(sb, inodeIndex, empty);
+    io_.writeByte(sb.s_bm_inode_start + inodeIndex, '0');
+    sb.s_free_inodes_count++;
+    if (sb.s_first_ino < 0 || inodeIndex < sb.s_first_ino) sb.s_first_ino = inodeIndex;
+    return true;
+}
+
+bool Ext2Paths::freeBlock(SuperBlock& sb, int32_t blockIndex) {
+    if (blockIndex < 0 || blockIndex >= sb.s_blocks_count) return false;
+
+    FileBlock empty{};
+    std::memset(empty.b_content, 0, sizeof(empty.b_content));
+    writeFileBlock(sb, blockIndex, empty);
+    io_.writeByte(sb.s_bm_block_start + blockIndex, '0');
+    sb.s_free_blocks_count++;
+    if (sb.s_first_blo < 0 || blockIndex < sb.s_first_blo) sb.s_first_blo = blockIndex;
+    return true;
+}

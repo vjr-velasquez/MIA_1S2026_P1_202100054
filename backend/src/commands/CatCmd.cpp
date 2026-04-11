@@ -1,6 +1,8 @@
 #include "commands/CatCmd.h"
 #include "disk/MountManager.h"
 #include "fs/Ext2Paths.h"
+#include "fs/FsFileOps.h"
+#include "session/SessionManager.h"
 
 #include <algorithm>
 #include <cctype>
@@ -94,15 +96,28 @@ namespace {
 std::string CatCmd::exec(const std::string& line) {
     auto params = parse_params_multi(line);
 
-    if (!params.count("id") || params["id"].empty()) {
-        return "ERROR: cat -> falta -id\n";
+    std::vector<std::string> paths;
+    if (params.count("path")) {
+        paths = params["path"];
+    } else {
+        for (const auto& entry : params) {
+            if (entry.first.rfind("file", 0) == 0) {
+                paths.insert(paths.end(), entry.second.begin(), entry.second.end());
+            }
+        }
     }
-    if (!params.count("path") || params["path"].empty()) {
+    if (paths.empty()) {
         return "ERROR: cat -> falta -path\n";
     }
 
-    const std::string id = params["id"].back();
-    const std::vector<std::string>& paths = params["path"];
+    std::string id;
+    if (params.count("id") && !params["id"].empty()) {
+        id = params["id"].back();
+    } else if (SessionManager::instance().isActive()) {
+        id = SessionManager::instance().current().id;
+    } else {
+        return "ERROR: cat -> falta -id\n";
+    }
 
     MountEntry mounted;
     if (!MountManager::instance().getById(id, mounted)) {
@@ -122,29 +137,15 @@ std::string CatCmd::exec(const std::string& line) {
             return "ERROR: cat -> -path debe ser absoluta e iniciar con '/'\n";
         }
 
-        int32_t inodeIdx = fs.resolvePath(sb, path);
-        if (inodeIdx < 0) {
+        std::string content;
+        int32_t inodeIdx = -1;
+        if (!FsFileOps::readFile(fs, sb, path, content, &inodeIdx)) {
             return "ERROR: cat -> no existe: " + path + "\n";
         }
 
         Inode fileInode = fs.readInode(sb, inodeIdx);
-        if (fileInode.i_type != '1') {
-            return "ERROR: cat -> no es archivo: " + path + "\n";
-        }
-
         fileInode.i_atime = static_cast<int64_t>(std::time(nullptr));
         fs.writeInode(sb, inodeIdx, fileInode);
-
-        std::string content;
-        int32_t remaining = fileInode.i_size;
-        for (int b = 0; b < 12 && remaining > 0; ++b) {
-            if (fileInode.i_block[b] < 0) break;
-
-            FileBlock fb = fs.readFileBlock(sb, fileInode.i_block[b]);
-            int32_t chunk = std::min<int32_t>(remaining, 64);
-            content.append(fb.b_content, fb.b_content + chunk);
-            remaining -= chunk;
-        }
 
         if (paths.size() > 1) {
             out << "OK: cat -> " << path << "\n";

@@ -24,10 +24,17 @@ add_executable(mia_backend
     src/commands/CatCmd.cpp
     src/commands/ChmodCmd.cpp
     src/commands/ChownCmd.cpp
+    src/commands/UserSessionCmds.cpp
+    src/commands/Project2Cmds.cpp
+    src/commands/Ext3Cmds.cpp
 
     src/fs/Ext2IO.cpp
     src/fs/Ext2Formatter.cpp
     src/fs/Ext2Paths.cpp
+    src/fs/FsFileOps.cpp
+    src/fs/JournalManager.cpp
+
+    src/session/SessionManager.cpp
 
 
 )

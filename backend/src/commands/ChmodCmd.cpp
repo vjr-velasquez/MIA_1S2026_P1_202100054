@@ -1,11 +1,14 @@
 #include "commands/ChmodCmd.h"
 #include "disk/MountManager.h"
 #include "fs/Ext2Paths.h"
+#include "fs/JournalManager.h"
+#include "session/SessionManager.h"
 
 #include <algorithm>
 #include <cctype>
 #include <cstdint>
 #include <ctime>
+#include <functional>
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -102,13 +105,17 @@ namespace {
 std::string ChmodCmd::exec(const std::string& line) {
     auto params = parse_params(line);
 
-    if (!params.count("id"))   return "ERROR: chmod -> falta -id\n";
     if (!params.count("path")) return "ERROR: chmod -> falta -path\n";
-    if (!params.count("perm")) return "ERROR: chmod -> falta -perm\n";
+    if (!params.count("perm") && !params.count("ugo")) return "ERROR: chmod -> falta -ugo\n";
 
-    const std::string id = params["id"];
+    std::string id;
+    if (params.count("id")) id = params["id"];
+    else if (SessionManager::instance().isActive()) id = SessionManager::instance().current().id;
+    else return "ERROR: chmod -> falta -id\n";
+
     const std::string path = params["path"];
-    const std::string permRaw = params["perm"];
+    const std::string permRaw = params.count("ugo") ? params["ugo"] : params["perm"];
+    const bool recursive = params.count("r") && params["r"] == "true";
 
     if (path.empty() || path[0] != '/') {
         return "ERROR: chmod -> -path debe ser absoluta e iniciar con '/'\n";
@@ -128,6 +135,12 @@ std::string ChmodCmd::exec(const std::string& line) {
     if (!MountManager::instance().getById(id, mounted)) {
         return "ERROR: chmod -> no existe montaje con id=" + id + "\n";
     }
+    if (!SessionManager::instance().isActive() || SessionManager::instance().current().id != id) {
+        return "ERROR: chmod -> requiere una sesión activa sobre la partición\n";
+    }
+    if (SessionManager::instance().current().username != "root") {
+        return "ERROR: chmod -> solo root puede ejecutar este comando\n";
+    }
 
     Ext2Paths fs(mounted.path, mounted.start);
     SuperBlock sb = fs.loadSuper();
@@ -140,10 +153,22 @@ std::string ChmodCmd::exec(const std::string& line) {
         return "ERROR: chmod -> no existe: " + path + "\n";
     }
 
-    Inode inode = fs.readInode(sb, inodeIdx);
-    inode.i_perm = perm;
-    inode.i_mtime = static_cast<int64_t>(std::time(nullptr));
-    fs.writeInode(sb, inodeIdx, inode);
+    std::function<void(int32_t)> applyPerms = [&](int32_t idx) {
+        Inode inode = fs.readInode(sb, idx);
+        inode.i_perm = perm;
+        inode.i_mtime = static_cast<int64_t>(std::time(nullptr));
+        fs.writeInode(sb, idx, inode);
+
+        if (!recursive || inode.i_type != '0') return;
+        auto entries = fs.listDirectory(sb, idx);
+        for (const auto& entry : entries) {
+            if (entry.name == "." || entry.name == "..") continue;
+            applyPerms(entry.inodeIndex);
+        }
+    };
+
+    applyPerms(inodeIdx);
+    JournalManager::append(mounted.path, mounted.start, sb, "chmod", path, permRaw);
 
     return "OK: chmod -> permisos actualizados: " + path + " perm=" + std::to_string(perm) + "\n";
 }

@@ -1,0 +1,5 @@
+/ (inode=0, type=0, perm=664)
+  users.txt (inode=1, type=1, perm=664)
+  r (inode=2, type=0, perm=664)
+    docs (inode=3, type=0, perm=664)
+      a.txt (inode=4, type=1, perm=664)

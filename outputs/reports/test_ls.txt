@@ -1,0 +1,16 @@
+REPORTE DISK (MINIMO)
+DISK: /home/vjr-velasquez/Documentos/mia-proyecto1/outputs/disks/test_repfs.mia
+ID: vda1
+
+mbr_tamano: 8388608 bytes
+mbr_fit: F
+
+PARTICIONES MBR (4)
+idx | status | type | fit | start | size | name
+----+--------+------+-----+-------+------+----------------
+0   | 1      | P    | F   | 125   | 6291456 | Part1
+1   | 0      | P    | F   | -1   | 0 | 
+2   | 0      | P    | F   | -1   | 0 | 
+3   | 0      | P    | F   | -1   | 0 | 
+
+(No hay partición extendida)

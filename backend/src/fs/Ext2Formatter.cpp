@@ -1,5 +1,6 @@
 #include "fs/Ext2Formatter.h"
 #include "fs/Ext2IO.h"
+#include "fs/JournalManager.h"
 
 #include "structs/SuperBlock.h"
 #include "structs/Inode.h"
@@ -16,39 +17,32 @@ namespace {
     constexpr int32_t EXT2_TYPE  = 2;
 }
 
-int Ext2Formatter::calculateN(int64_t partSize) const {
-    // Fórmula simplificada para cantidad de inodos:
-    // n = floor((partSize - sizeof(SuperBlock)) / (1 + 3 + sizeof(Inode) + 3*sizeof(FileBlock)))
-    //
-    // 1 byte por bitmap de inodo
-    // 3 bytes por bitmap de bloques (asumiendo 3 bloques por inodo)
-    // sizeof(Inode)
-    // 3 * sizeof(FileBlock) como aproximación de bloques por inodo
-    //
-    // Es una versión práctica para este proyecto inicial.
-    int64_t numerator = partSize - static_cast<int64_t>(sizeof(SuperBlock));
+int Ext2Formatter::calculateN(int64_t partSize, int fsType) const {
+    int64_t journalBytes = (fsType == 3)
+        ? static_cast<int64_t>(JournalManager::kJournalCount) * static_cast<int64_t>(sizeof(JournalEntry))
+        : 0;
+
+    int64_t numerator = partSize - static_cast<int64_t>(sizeof(SuperBlock)) - journalBytes;
     int64_t denominator =
-        1 +                  // bitmap inodo
-        3 +                  // bitmap bloques
+        1 +
+        3 +
         static_cast<int64_t>(sizeof(Inode)) +
         3 * static_cast<int64_t>(sizeof(FileBlock));
 
     if (denominator <= 0) return 0;
-
     int64_t n = numerator / denominator;
-    if (n < 2) return 0; // mínimo necesitamos raíz + users.txt
-    if (n > 1000000) n = 1000000; // tope defensivo
-
+    if (n < 2) return 0;
+    if (n > 1000000) n = 1000000;
     return static_cast<int>(n);
 }
 
-std::string Ext2Formatter::format(const std::string& diskPath, int64_t partStart, int64_t partSize) {
+std::string Ext2Formatter::format(const std::string& diskPath, int64_t partStart, int64_t partSize, int fsType) {
     try {
         if (partStart < 0 || partSize <= 0) {
             return "ERROR: mkfs -> partición inválida\n";
         }
 
-        int n = calculateN(partSize);
+        int n = calculateN(partSize, fsType);
         if (n <= 0) {
             return "ERROR: mkfs -> tamaño insuficiente para formatear EXT2\n";
         }
@@ -56,7 +50,11 @@ std::string Ext2Formatter::format(const std::string& diskPath, int64_t partStart
         const int32_t inodeCount = n;
         const int32_t blockCount = n * 3;
 
-        const int64_t bmInodeStart = partStart + static_cast<int64_t>(sizeof(SuperBlock));
+        const int64_t journalBytes = (fsType == 3)
+            ? static_cast<int64_t>(JournalManager::kJournalCount) * static_cast<int64_t>(sizeof(JournalEntry))
+            : 0;
+
+        const int64_t bmInodeStart = partStart + static_cast<int64_t>(sizeof(SuperBlock)) + journalBytes;
         const int64_t bmBlockStart = bmInodeStart + inodeCount;
         const int64_t inodeStart   = bmBlockStart + blockCount;
         const int64_t blockStart   = inodeStart + static_cast<int64_t>(inodeCount) * sizeof(Inode);
@@ -67,7 +65,7 @@ std::string Ext2Formatter::format(const std::string& diskPath, int64_t partStart
         // 1) Inicializar superbloque
         // ---------------------------------------------------------------------
         SuperBlock sb{};
-        sb.s_filesystem_type   = EXT2_TYPE;
+        sb.s_filesystem_type   = fsType;
         sb.s_inodes_count      = inodeCount;
         sb.s_blocks_count      = blockCount;
         sb.s_free_inodes_count = inodeCount - 2; // raíz + users.txt
@@ -89,6 +87,10 @@ std::string Ext2Formatter::format(const std::string& diskPath, int64_t partStart
         sb.s_block_start       = blockStart;
 
         io.writeStruct(partStart, sb);
+
+        if (fsType == 3) {
+            JournalManager::initialize(diskPath, partStart);
+        }
 
         // ---------------------------------------------------------------------
         // 2) Inicializar bitmaps
@@ -213,7 +215,7 @@ std::string Ext2Formatter::format(const std::string& diskPath, int64_t partStart
 
         io.writeStruct(sb.s_block_start + 1 * static_cast<int64_t>(sizeof(FileBlock)), usersBlock);
 
-        return "OK: mkfs -> partición formateada como EXT2\n";
+        return std::string("OK: mkfs -> partición formateada como ") + (fsType == 3 ? "EXT3\n" : "EXT2\n");
     } catch (const std::exception& ex) {
         std::ostringstream out;
         out << "ERROR: mkfs -> " << ex.what() << "\n";

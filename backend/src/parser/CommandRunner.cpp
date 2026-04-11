@@ -10,6 +10,9 @@
 #include "commands/CatCmd.h"
 #include "commands/ChmodCmd.h"
 #include "commands/ChownCmd.h"
+#include "commands/UserSessionCmds.h"
+#include "commands/Project2Cmds.h"
+#include "commands/Ext3Cmds.h"
 
 
 #include <sstream>
@@ -130,6 +133,10 @@ std::string CommandRunner::run(const std::string& input) {
             MountedCmd m;
             out << m.exec();
         }
+        else if (c == "unmount") {
+            UnmountCmd u;
+            out << u.exec(t);
+        }
         else if (c == "rep") {
             RepCmd r;
             out << r.exec(t);
@@ -157,6 +164,62 @@ std::string CommandRunner::run(const std::string& input) {
         else if (c == "chown") {
             ChownCmd chown;
             out << chown.exec(t);
+        }
+        else if (c == "login") {
+            LoginCmd login;
+            out << login.exec(t);
+        }
+        else if (c == "logout") {
+            LogoutCmd logout;
+            out << logout.exec();
+        }
+        else if (c == "mkgrp") {
+            MkGrpCmd mkgrp;
+            out << mkgrp.exec(t);
+        }
+        else if (c == "rmgrp") {
+            RmGrpCmd rmgrp;
+            out << rmgrp.exec(t);
+        }
+        else if (c == "mkusr") {
+            MkUsrCmd mkusr;
+            out << mkusr.exec(t);
+        }
+        else if (c == "rmusr") {
+            RmUsrCmd rmusr;
+            out << rmusr.exec(t);
+        }
+        else if (c == "chgrp") {
+            ChGrpCmd chgrp;
+            out << chgrp.exec(t);
+        }
+        else if (c == "remove") {
+            RemoveCmd remove;
+            out << remove.exec(t);
+        }
+        else if (c == "rename") {
+            RenameCmd rename;
+            out << rename.exec(t);
+        }
+        else if (c == "copy") {
+            CopyCmd copy;
+            out << copy.exec(t);
+        }
+        else if (c == "move") {
+            MoveCmd move;
+            out << move.exec(t);
+        }
+        else if (c == "find") {
+            FindCmd find;
+            out << find.exec(t);
+        }
+        else if (c == "loss") {
+            LossCmd loss;
+            out << loss.exec(t);
+        }
+        else if (c == "journaling") {
+            JournalingCmd journaling;
+            out << journaling.exec(t);
         }
         else {
             out << "ERROR: comando no reconocido -> " << cmd << "\n";

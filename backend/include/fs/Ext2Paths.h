@@ -11,6 +11,13 @@
 #include "structs/FolderBlock.h"
 #include "structs/FileBlock.h"
 
+struct DirEntryRef {
+    std::string name;
+    int32_t inodeIndex;
+    int32_t blockPtrSlot;
+    int32_t contentSlot;
+};
+
 class Ext2Paths {
 public:
     explicit Ext2Paths(const std::string& diskPath, int64_t partStart);
@@ -57,6 +64,19 @@ public:
 
     // insertar entrada en un directorio (crea nuevo bloque si está lleno)
     bool addDirEntry(SuperBlock& sb, int32_t parentInodeIndex, const std::string& name, int32_t childInodeIndex);
+
+    // Lista entradas válidas del directorio
+    std::vector<DirEntryRef> listDirectory(const SuperBlock& sb, int32_t dirInodeIndex);
+
+    // Elimina una entrada dentro de un directorio
+    bool removeDirEntry(const SuperBlock& sb, int32_t parentInodeIndex, const std::string& name);
+
+    // Cambia el nombre de una entrada dentro de un directorio
+    bool renameDirEntry(const SuperBlock& sb, int32_t parentInodeIndex, const std::string& oldName, const std::string& newName);
+
+    // Libera estructuras del bitmap y limpia el contenido
+    bool freeInode(SuperBlock& sb, int32_t inodeIndex);
+    bool freeBlock(SuperBlock& sb, int32_t blockIndex);
 
     // Guarda superbloque actualizado
     void writeSuper(const SuperBlock& sb);

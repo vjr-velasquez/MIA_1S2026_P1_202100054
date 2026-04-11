@@ -60,6 +60,18 @@ std::string MountManager::mount(const std::string& path, const std::string& name
     return out.str();
 }
 
+std::string MountManager::unmount(const std::string& id) {
+    for (auto it = mounts.begin(); it != mounts.end(); ++it) {
+        if (it->id == id) {
+            std::ostringstream out;
+            out << "OK: unmount -> partición desmontada: " << id << "\n";
+            mounts.erase(it);
+            return out.str();
+        }
+    }
+    return "ERROR: unmount -> no existe montaje con id=" + id + "\n";
+}
+
 std::string MountManager::list() const {
     std::ostringstream out;
 

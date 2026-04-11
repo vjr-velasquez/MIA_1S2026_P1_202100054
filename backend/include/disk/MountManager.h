@@ -17,6 +17,7 @@ public:
 
     // retorna id o error (string empieza con "ERROR:")
     std::string mount(const std::string& path, const std::string& name, int32_t start, int32_t size);
+    std::string unmount(const std::string& id);
 
     std::string list() const;
 
