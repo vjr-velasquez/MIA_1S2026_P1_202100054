@@ -1,0 +1,128 @@
+# ============== PROYECTO 2 - CALIFICACION ======================
+#   Adaptado a rutas locales del proyecto e IDs usados por el backend
+
+# -------------------------- BASE -----------------------------
+# crear la base y calificar la app web
+
+mkdisk -size=50 -unit=M -fit=FF -path="/tmp/mia/discos/discoPrueba.mia"
+
+# Particiones base para la prueba
+fdisk -size=12 -unit=M -path="/tmp/mia/discos/discoPrueba.mia" -type=P -fit=WF -name="EXT2_BASE"
+fdisk -size=18 -unit=M -path="/tmp/mia/discos/discoPrueba.mia" -type=P -fit=WF -name="EXT3_WORK"
+fdisk -size=5  -unit=M -path="/tmp/mia/discos/discoPrueba.mia" -type=P -fit=WF -name="TEMP_DELETE"
+
+# Montajes necesarios
+mount -path="/tmp/mia/discos/discoPrueba.mia" -name="EXT2_BASE"
+mount -path="/tmp/mia/discos/discoPrueba.mia" -name="EXT3_WORK"
+mounted
+
+
+# -------------------------- PARTE 1 -----------------------------
+#    MKFS, LOGIN, LOGOUT, MKDIR, MKFILE - (Tambien se califica la app web)
+
+# Formateo EXT2
+mkfs -id=vda1 -type=full -fs=2fs
+
+# Login en la particion EXT2
+login -user=root -pass=123 -id=vda1
+
+# Crear carpetas y archivo base
+mkdir -path="/docs/proyecto2/base" -p
+mkfile -path="/docs/proyecto2/base/nota_ext2.txt" -size=64 -r
+
+# Cierre de sesion
+logout
+
+# Tambien se prueba UNMOUNT sobre la particion EXT2 ya utilizada
+unmount -id=vda1
+mounted
+
+
+# ----------------------------- PARTE 3 - NUEVOS COMANDOS ---------------------------
+#    FDISK, ADD, DELETE, UNMOUNT, MKFS, FS, REMOVE, RENAME, COPY, MOVE, FIND, CHOWN, CHMOD
+#   (se verifica en la app web)
+
+# FDISK con ADD sobre una particion existente
+fdisk -add=1 -unit=M -path="/tmp/mia/discos/discoPrueba.mia" -name="TEMP_DELETE"
+
+# -------------------
+# FDISK con DELETE sobre una particion existente
+fdisk -delete=fast -path="/tmp/mia/discos/discoPrueba.mia" -name="TEMP_DELETE"
+
+# Formateo EXT3 en la particion de trabajo
+mkfs -id=vda2 -type=full -fs=3fs
+
+# Login en la particion EXT3
+login -user=root -pass=123 -id=vda2
+
+# Usuarios auxiliares para CHOWN
+mkgrp -name=devs
+mkusr -user=user2 -pass=123 -grp=devs
+
+# Estructura de trabajo
+mkdir -path="/home/usuario/docs" -p
+mkdir -path="/home/usuario/images" -p
+mkdir -path="/home/usuario/archive" -p
+mkdir -path="/backup" -p
+
+# Archivos base para REMOVE / RENAME / COPY / MOVE / FIND
+mkfile -path="/home/usuario/docs/a.txt" -size=50 -r
+mkfile -path="/home/usuario/docs/b.txt" -size=80 -r
+mkfile -path="/home/usuario/docs/c.txt" -size=30 -r
+mkfile -path="/home/usuario/images/a.jpg" -size=20 -r
+mkfile -path="/home/usuario/images/abcd.jpg" -size=25 -r
+
+# -------------------
+# REMOVE (quita el c)
+remove -path="/home/usuario/docs/c.txt"
+
+# RENAME (cambia nombre)
+rename -path="/home/usuario/docs/a.txt" -name="a1.txt"
+
+# COPY(copia)
+copy -path="/home/usuario/docs" -destino="/backup"
+
+# MOVE(mueve)
+move -path="/home/usuario/docs/b.txt" -destino="/home/usuario/archive"
+
+# FIND
+# muestra todo
+find -path="/" -name="*.txt"
+
+# muestra una imagen
+find -path="/" -name="?.jpg"
+
+# CHOWN --- cambia propietario
+chown -path="/backup/docs" -r -usuario=user2
+
+# CHMOD
+chmod -path="/backup/docs" -r -ugo=764
+
+cat -file1="/users.txt"
+
+logout
+
+
+# -------------------------------------------------------------------------------
+# -------------------------- PARTE 4 - JOURNALING -------------------------------
+#    LOSS y JOURNALING
+
+# El journaling debe mostrarse en interfaz segun el enunciado.
+journaling -id=vda2
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_mbr.svg" -name=mbr
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_disk.svg" -name=disk
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_sb.svg" -name=sb
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_tree.svg" -name=tree
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_inode.svg" -name=inode
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_block.svg" -name=block
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_bm_inode.txt" -name=bm_inode
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_bm_block.txt" -name=bm_block
+
+# --------------------------
+# Simulacion de perdida sobre EXT3
+loss -id=vda2
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_bm_inode.txt" -name=bm_inode
+rep -id=vda2 -path="/tmp/mia/reportes/parte5/reporte_bm_block.txt" -name=bm_block
+
+# Verificar
+journaling -id=vda2

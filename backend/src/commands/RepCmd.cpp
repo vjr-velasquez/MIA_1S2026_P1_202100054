@@ -1,323 +1,498 @@
 #include "commands/RepCmd.h"
+
 #include "disk/BinaryIO.h"
 #include "disk/MountManager.h"
 #include "fs/Ext2Paths.h"
 #include "fs/FsFileOps.h"
-#include "structs/MBR.h"
 #include "structs/EBR.h"
+#include "structs/MBR.h"
 
-#include <sstream>
-#include <unordered_map>
 #include <algorithm>
 #include <cctype>
-#include <fstream>
-#include <filesystem>
+#include <cstdlib>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <functional>
+#include <sstream>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-static inline std::string trim(const std::string& s) {
-    size_t start = s.find_first_not_of(" \t\r\n");
-    if (start == std::string::npos) return "";
-    size_t end = s.find_last_not_of(" \t\r\n");
-    return s.substr(start, end - start + 1);
-}
-
-static inline std::string tolower_str(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(),
-                   [](unsigned char c){ return (char)std::tolower(c); });
-    return s;
-}
-
-static inline std::string strip_quotes(std::string v) {
-    v = trim(v);
-    if (v.size() >= 2) {
-        if ((v.front()=='"' && v.back()=='"') || (v.front()=='\'' && v.back()=='\'')) {
-            return v.substr(1, v.size()-2);
-        }
+namespace {
+    std::string trim(const std::string& s) {
+        size_t start = s.find_first_not_of(" \t\r\n");
+        if (start == std::string::npos) return "";
+        size_t end = s.find_last_not_of(" \t\r\n");
+        return s.substr(start, end - start + 1);
     }
-    return v;
-}
 
-static std::unordered_map<std::string,std::string> parse_params_local(const std::string& line) {
-    std::unordered_map<std::string,std::string> p;
-    std::istringstream iss(line);
-    std::string token;
-    iss >> token; // comando
-
-    while (iss >> token) {
-        if (token.rfind("-", 0) != 0) continue;
-
-        auto eq = token.find('=');
-        if (eq == std::string::npos) {
-            p[tolower_str(token.substr(1))] = "true";
-        } else {
-            std::string key = tolower_str(token.substr(1, eq-1));
-            std::string val = strip_quotes(token.substr(eq+1));
-            p[key] = val;
-        }
+    std::string tolower_str(std::string s) {
+        std::transform(s.begin(), s.end(), s.begin(),
+                       [](unsigned char c){ return static_cast<char>(std::tolower(c)); });
+        return s;
     }
-    return p;
-}
 
-static std::string part_name_to_string(const char part_name[16]) {
-    char tmp[17];
-    std::memset(tmp, 0, sizeof(tmp));
-    std::memcpy(tmp, part_name, 16);
-    return std::string(tmp);
-}
+    std::string strip_quotes(std::string v) {
+        v = trim(v);
+        if (v.size() >= 2) {
+            if ((v.front() == '"' && v.back() == '"') || (v.front() == '\'' && v.back() == '\'')) {
+                return v.substr(1, v.size() - 2);
+            }
+        }
+        return v;
+    }
 
-static bool is_used_part(const Partition& p) {
-    return p.part_status == '1' && p.part_start >= 0 && p.part_size > 0;
-}
+    std::unordered_map<std::string, std::string> parse_params_local(const std::string& line) {
+        std::unordered_map<std::string, std::string> p;
+        std::istringstream iss(line);
+        std::string token;
+        iss >> token;
 
-static bool find_extended_part(const MBR& mbr, Partition& out) {
-    for (int i = 0; i < 4; i++) {
-        const auto& p = mbr.mbr_partitions[i];
-        if (is_used_part(p) && (p.part_type == 'E' || p.part_type == 'e')) {
-            out = p;
+        while (iss >> token) {
+            if (token.rfind("-", 0) != 0) continue;
+            auto eq = token.find('=');
+            if (eq == std::string::npos) {
+                p[tolower_str(token.substr(1))] = "true";
+            } else {
+                std::string key = tolower_str(token.substr(1, eq - 1));
+                std::string val = strip_quotes(token.substr(eq + 1));
+                p[key] = val;
+            }
+        }
+        return p;
+    }
+
+    std::string part_name_to_string(const char part_name[16]) {
+        char tmp[17];
+        std::memset(tmp, 0, sizeof(tmp));
+        std::memcpy(tmp, part_name, 16);
+        return std::string(tmp);
+    }
+
+    bool is_used_part(const Partition& p) {
+        return p.part_status == '1' && p.part_start >= 0 && p.part_size > 0;
+    }
+
+    bool find_extended_part(const MBR& mbr, Partition& out) {
+        for (int i = 0; i < 4; i++) {
+            const auto& p = mbr.mbr_partitions[i];
+            if (is_used_part(p) && (p.part_type == 'E' || p.part_type == 'e')) {
+                out = p;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::string html_escape(const std::string& s) {
+        std::string out;
+        out.reserve(s.size());
+        for (char c : s) {
+            switch (c) {
+                case '&': out += "&amp;"; break;
+                case '<': out += "&lt;"; break;
+                case '>': out += "&gt;"; break;
+                case '"': out += "&quot;"; break;
+                case '\n': out += "<BR/>"; break;
+                default: out.push_back(c); break;
+            }
+        }
+        return out;
+    }
+
+    std::string shell_escape(const std::string& s) {
+        std::string out = "'";
+        for (char c : s) {
+            if (c == '\'') out += "'\\''";
+            else out.push_back(c);
+        }
+        out += "'";
+        return out;
+    }
+
+    std::string join_blocks(const Inode& inode) {
+        std::ostringstream out;
+        bool first = true;
+        for (int i = 0; i < 15; ++i) {
+            if (!first) out << ", ";
+            out << inode.i_block[i];
+            first = false;
+        }
+        return out.str();
+    }
+
+    std::string file_block_content(const FileBlock& fb) {
+        std::string content;
+        for (char c : fb.b_content) {
+            if (c == '\0') break;
+            content.push_back(c);
+        }
+        return content;
+    }
+
+    bool write_text_file(const std::string& path, const std::string& content) {
+        std::ofstream out(path, std::ios::out | std::ios::trunc);
+        if (!out.is_open()) return false;
+        out << content;
+        return true;
+    }
+
+    bool render_dot(const std::string& dot, const std::string& out_path, std::string& error) {
+        std::filesystem::path output(out_path);
+        const std::string ext = tolower_str(output.extension().string());
+
+        if (ext == ".dot") {
+            if (!write_text_file(out_path, dot)) {
+                error = "no se pudo escribir el archivo .dot";
+                return false;
+            }
             return true;
         }
+
+        const std::unordered_map<std::string, std::string> format_map = {
+            {".png", "png"},
+            {".jpg", "jpg"},
+            {".jpeg", "jpg"},
+            {".svg", "svg"},
+            {".pdf", "pdf"}
+        };
+
+        auto it = format_map.find(ext);
+        if (it == format_map.end()) {
+            error = "extensión de salida no soportada para Graphviz";
+            return false;
+        }
+
+        std::filesystem::path dot_path = output;
+        dot_path.replace_extension(".dot");
+        if (!write_text_file(dot_path.string(), dot)) {
+            error = "no se pudo escribir el archivo temporal .dot";
+            return false;
+        }
+
+        std::string cmd = "dot -T" + it->second + " "
+            + shell_escape(dot_path.string())
+            + " -o " + shell_escape(out_path);
+
+        int rc = std::system(cmd.c_str());
+        if (rc != 0) {
+            error = "falló la ejecución de Graphviz";
+            return false;
+        }
+        return true;
     }
-    return false;
+
+    std::string build_mbr_dot(const MBR& mbr, const std::string& disk_path, const std::string& used_id) {
+        std::ostringstream dot;
+        dot << "digraph G {\n";
+        dot << "  graph [pad=0.2, nodesep=0.4, ranksep=0.4];\n";
+        dot << "  node [shape=plain];\n";
+        dot << "  mbr [label=<\n";
+        dot << "    <TABLE BORDER=\"1\" CELLBORDER=\"1\" CELLSPACING=\"0\">\n";
+        dot << "      <TR><TD BGCOLOR=\"lightsteelblue\" COLSPAN=\"2\"><B>REPORTE MBR</B></TD></TR>\n";
+        dot << "      <TR><TD><B>DISK</B></TD><TD>" << html_escape(disk_path) << "</TD></TR>\n";
+        if (!used_id.empty()) {
+            dot << "      <TR><TD><B>ID</B></TD><TD>" << html_escape(used_id) << "</TD></TR>\n";
+        }
+        dot << "      <TR><TD><B>mbr_tamano</B></TD><TD>" << mbr.mbr_tamano << "</TD></TR>\n";
+        dot << "      <TR><TD><B>mbr_fecha_creacion</B></TD><TD>" << mbr.mbr_fecha_creacion << "</TD></TR>\n";
+        dot << "      <TR><TD><B>mbr_disk_signature</B></TD><TD>" << mbr.mbr_disk_signature << "</TD></TR>\n";
+        dot << "      <TR><TD><B>mbr_fit</B></TD><TD>" << mbr.mbr_fit << "</TD></TR>\n";
+        for (int i = 0; i < 4; ++i) {
+            const auto& pt = mbr.mbr_partitions[i];
+            dot << "      <TR><TD BGCOLOR=\"lightgray\" COLSPAN=\"2\"><B>Particion " << i << "</B></TD></TR>\n";
+            dot << "      <TR><TD>status</TD><TD>" << pt.part_status << "</TD></TR>\n";
+            dot << "      <TR><TD>type</TD><TD>" << pt.part_type << "</TD></TR>\n";
+            dot << "      <TR><TD>fit</TD><TD>" << pt.part_fit << "</TD></TR>\n";
+            dot << "      <TR><TD>start</TD><TD>" << pt.part_start << "</TD></TR>\n";
+            dot << "      <TR><TD>size</TD><TD>" << pt.part_size << "</TD></TR>\n";
+            dot << "      <TR><TD>name</TD><TD>" << html_escape(part_name_to_string(pt.part_name)) << "</TD></TR>\n";
+        }
+        dot << "    </TABLE>\n";
+        dot << "  >];\n";
+        dot << "}\n";
+        return dot.str();
+    }
+
+    std::string build_disk_dot(const MBR& mbr) {
+        std::ostringstream dot;
+        dot << "digraph G {\n";
+        dot << "  graph [pad=0.2];\n";
+        dot << "  node [shape=record];\n";
+        dot << "  disk [label=\"MBR";
+        for (int i = 0; i < 4; ++i) {
+            const auto& pt = mbr.mbr_partitions[i];
+            if (!is_used_part(pt)) continue;
+            dot << "|{" << html_escape(part_name_to_string(pt.part_name))
+                << "|type=" << pt.part_type
+                << "|start=" << pt.part_start
+                << "|size=" << pt.part_size << "}";
+        }
+        dot << "\"];\n";
+        dot << "}\n";
+        return dot.str();
+    }
+
+    std::string build_sb_dot(const SuperBlock& sb) {
+        std::ostringstream dot;
+        dot << "digraph G {\n";
+        dot << "  node [shape=plain];\n";
+        dot << "  sb [label=<\n";
+        dot << "    <TABLE BORDER=\"1\" CELLBORDER=\"1\" CELLSPACING=\"0\">\n";
+        dot << "      <TR><TD BGCOLOR=\"lightgoldenrod1\" COLSPAN=\"2\"><B>SUPERBLOCK</B></TD></TR>\n";
+        auto row = [&](const std::string& k, auto v) {
+            dot << "      <TR><TD><B>" << k << "</B></TD><TD>" << v << "</TD></TR>\n";
+        };
+        row("s_filesystem_type", sb.s_filesystem_type);
+        row("s_inodes_count", sb.s_inodes_count);
+        row("s_blocks_count", sb.s_blocks_count);
+        row("s_free_blocks_count", sb.s_free_blocks_count);
+        row("s_free_inodes_count", sb.s_free_inodes_count);
+        row("s_mtime", sb.s_mtime);
+        row("s_umtime", sb.s_umtime);
+        row("s_mnt_count", sb.s_mnt_count);
+        row("s_magic", sb.s_magic);
+        row("s_inode_size", sb.s_inode_size);
+        row("s_block_size", sb.s_block_size);
+        row("s_first_ino", sb.s_first_ino);
+        row("s_first_blo", sb.s_first_blo);
+        row("s_bm_inode_start", sb.s_bm_inode_start);
+        row("s_bm_block_start", sb.s_bm_block_start);
+        row("s_inode_start", sb.s_inode_start);
+        row("s_block_start", sb.s_block_start);
+        dot << "    </TABLE>\n";
+        dot << "  >];\n";
+        dot << "}\n";
+        return dot.str();
+    }
+
+    std::string build_inode_dot(Ext2Paths& fs, const SuperBlock& sb, const std::string& disk_path) {
+        std::ostringstream dot;
+        dot << "digraph G {\n";
+        dot << "  rankdir=LR;\n";
+        dot << "  node [shape=plain];\n";
+        for (int i = 0; i < sb.s_inodes_count; ++i) {
+            char v = '\0';
+            BinaryIO::readAt(disk_path, sb.s_bm_inode_start + i, &v, 1);
+            if (v != '1') continue;
+            Inode inode = fs.readInode(sb, i);
+            dot << "  inode" << i << " [label=<\n";
+            dot << "    <TABLE BORDER=\"1\" CELLBORDER=\"1\" CELLSPACING=\"0\">\n";
+            dot << "      <TR><TD BGCOLOR=\"lightskyblue\" COLSPAN=\"2\"><B>Inodo " << i << "</B></TD></TR>\n";
+            dot << "      <TR><TD>uid</TD><TD>" << inode.i_uid << "</TD></TR>\n";
+            dot << "      <TR><TD>gid</TD><TD>" << inode.i_gid << "</TD></TR>\n";
+            dot << "      <TR><TD>size</TD><TD>" << inode.i_size << "</TD></TR>\n";
+            dot << "      <TR><TD>type</TD><TD>" << inode.i_type << "</TD></TR>\n";
+            dot << "      <TR><TD>perm</TD><TD>" << inode.i_perm << "</TD></TR>\n";
+            dot << "      <TR><TD>blocks</TD><TD>" << html_escape(join_blocks(inode)) << "</TD></TR>\n";
+            dot << "    </TABLE>\n";
+            dot << "  >];\n";
+        }
+        dot << "}\n";
+        return dot.str();
+    }
+
+    std::string build_block_dot(Ext2Paths& fs, const SuperBlock& sb, const std::string& disk_path) {
+        std::ostringstream dot;
+        dot << "digraph G {\n";
+        dot << "  rankdir=LR;\n";
+        dot << "  node [shape=plain];\n";
+        for (int i = 0; i < sb.s_blocks_count; ++i) {
+            char v = '\0';
+            BinaryIO::readAt(disk_path, sb.s_bm_block_start + i, &v, 1);
+            if (v != '1') continue;
+            FileBlock fb = fs.readFileBlock(sb, i);
+            dot << "  block" << i << " [label=<\n";
+            dot << "    <TABLE BORDER=\"1\" CELLBORDER=\"1\" CELLSPACING=\"0\">\n";
+            dot << "      <TR><TD BGCOLOR=\"palegreen\" COLSPAN=\"1\"><B>Bloque " << i << "</B></TD></TR>\n";
+            dot << "      <TR><TD>" << html_escape(file_block_content(fb)) << "</TD></TR>\n";
+            dot << "    </TABLE>\n";
+            dot << "  >];\n";
+        }
+        dot << "}\n";
+        return dot.str();
+    }
+
+    std::string build_tree_dot(Ext2Paths& fs, const SuperBlock& sb) {
+        std::ostringstream dot;
+        dot << "digraph G {\n";
+        dot << "  rankdir=TB;\n";
+        dot << "  node [shape=box, style=rounded];\n";
+
+        std::function<void(int32_t, const std::string&)> walk = [&](int32_t idx, const std::string& nodeName) {
+            Inode inode = fs.readInode(sb, idx);
+            dot << "  " << nodeName << " [label=\"" << html_escape(nodeName)
+                << "\\ninode=" << idx
+                << "\\ntype=" << inode.i_type
+                << "\\nperm=" << inode.i_perm << "\"];\n";
+
+            if (inode.i_type != '0') return;
+            auto entries = fs.listDirectory(sb, idx);
+            int childNum = 0;
+            for (const auto& entry : entries) {
+                if (entry.name == "." || entry.name == "..") continue;
+                std::string childNode = nodeName + "_" + std::to_string(childNum++);
+                walk(entry.inodeIndex, childNode);
+                dot << "  " << nodeName << " -> " << childNode
+                    << " [label=\"" << html_escape(entry.name) << "\"];\n";
+            }
+        };
+
+        walk(0, "root");
+        dot << "}\n";
+        return dot.str();
+    }
+
+    std::string build_file_dot(const std::string& path, const std::string& content) {
+        std::ostringstream dot;
+        dot << "digraph G {\n";
+        dot << "  node [shape=plain];\n";
+        dot << "  file [label=<\n";
+        dot << "    <TABLE BORDER=\"1\" CELLBORDER=\"1\" CELLSPACING=\"0\">\n";
+        dot << "      <TR><TD BGCOLOR=\"mistyrose\" COLSPAN=\"1\"><B>" << html_escape(path) << "</B></TD></TR>\n";
+        dot << "      <TR><TD>" << html_escape(content) << "</TD></TR>\n";
+        dot << "    </TABLE>\n";
+        dot << "  >];\n";
+        dot << "}\n";
+        return dot.str();
+    }
+
+    std::string build_ls_dot(Ext2Paths& fs, const SuperBlock& sb, int32_t dirIdx, const std::string& path) {
+        std::ostringstream dot;
+        dot << "digraph G {\n";
+        dot << "  node [shape=plain];\n";
+        dot << "  ls [label=<\n";
+        dot << "    <TABLE BORDER=\"1\" CELLBORDER=\"1\" CELLSPACING=\"0\">\n";
+        dot << "      <TR><TD BGCOLOR=\"khaki\" COLSPAN=\"4\"><B>LS " << html_escape(path) << "</B></TD></TR>\n";
+        dot << "      <TR><TD><B>Nombre</B></TD><TD><B>Inodo</B></TD><TD><B>Tipo</B></TD><TD><B>Perm</B></TD></TR>\n";
+        auto entries = fs.listDirectory(sb, dirIdx);
+        for (const auto& entry : entries) {
+            Inode inode = fs.readInode(sb, entry.inodeIndex);
+            dot << "      <TR><TD>" << html_escape(entry.name) << "</TD><TD>"
+                << entry.inodeIndex << "</TD><TD>"
+                << inode.i_type << "</TD><TD>"
+                << inode.i_perm << "</TD></TR>\n";
+        }
+        dot << "    </TABLE>\n";
+        dot << "  >];\n";
+        dot << "}\n";
+        return dot.str();
+    }
 }
 
 std::string RepCmd::exec(const std::string& line) {
     auto params = parse_params_local(line);
-
     if (!params.count("name")) return "ERROR: rep -> falta -name\n";
     if (!params.count("path")) return "ERROR: rep -> falta -path (salida)\n";
 
-    std::string name = tolower_str(params["name"]);
-    std::string out_path = params["path"];
+    const std::string name = tolower_str(params["name"]);
+    const std::string out_path = params["path"];
 
-    // ===== Fuente: preferir -id (calificación), si no usar -disk (debug) =====
     std::string disk_path;
     std::string used_id;
+    MountEntry mounted{};
 
     if (params.count("id")) {
         used_id = params["id"];
-        MountEntry me{};
-        if (!MountManager::instance().getById(used_id, me)) {
+        if (!MountManager::instance().getById(used_id, mounted)) {
             return "ERROR: rep -> id no encontrado (use mounted para ver ids)\n";
         }
-        disk_path = me.path;
+        disk_path = mounted.path;
     } else if (params.count("disk")) {
         disk_path = params["disk"];
     } else {
         return "ERROR: rep -> falta -id (partición montada) o -disk (disco fuente)\n";
     }
 
-    // Crear directorios de salida si no existen
-    std::filesystem::path p(out_path);
-    if (p.has_parent_path()) {
-        std::filesystem::create_directories(p.parent_path());
+    std::filesystem::path output_path(out_path);
+    if (output_path.has_parent_path()) {
+        std::filesystem::create_directories(output_path.parent_path());
     }
 
-    std::ofstream out(out_path, std::ios::out | std::ios::trunc);
-    if (!out.is_open()) return "ERROR: rep -> no se pudo crear el archivo de reporte\n";
-
     auto finish_ok = [&](const std::string& kind) {
-        out.close();
         std::ostringstream msg;
         msg << "OK: rep -> " << kind << " generado en: " << out_path << "\n";
         return msg.str();
     };
 
-    // Leer MBR del disco
     MBR mbr{};
     if (!BinaryIO::readAt0(disk_path, &mbr, sizeof(MBR))) {
         return "ERROR: rep -> no se pudo leer el MBR del disco\n";
     }
 
     if (name == "mbr") {
-        out << "REPORTE MBR\n";
-        out << "DISK: " << disk_path << "\n";
-        if (!used_id.empty()) out << "ID: " << used_id << "\n";
-        out << "\n";
-
-        out << "mbr_tamano: " << mbr.mbr_tamano << " bytes\n";
-        out << "mbr_fecha_creacion: " << mbr.mbr_fecha_creacion << "\n";
-        out << "mbr_disk_signature: " << mbr.mbr_disk_signature << "\n";
-        out << "mbr_fit: " << mbr.mbr_fit << "\n\n";
-
-        out << "PARTICIONES (4)\n";
-        out << "idx | status | type | fit | start | size | name\n";
-        out << "----+--------+------+-----+-------+------+----------------\n";
-
-        for (int i = 0; i < 4; i++) {
-            const auto& pt = mbr.mbr_partitions[i];
-            out << i
-                << "   | " << pt.part_status
-                << "      | " << pt.part_type
-                << "    | " << pt.part_fit
-                << "   | " << pt.part_start
-                << "   | " << pt.part_size
-                << " | " << part_name_to_string(pt.part_name)
-                << "\n";
+        std::string error;
+        if (!render_dot(build_mbr_dot(mbr, disk_path, used_id), out_path, error)) {
+            return "ERROR: rep -> " + error + "\n";
         }
-
         return finish_ok("mbr");
     }
 
     if (name == "disk") {
-        out << "REPORTE DISK (MINIMO)\n";
-        out << "DISK: " << disk_path << "\n";
-        if (!used_id.empty()) out << "ID: " << used_id << "\n";
-        out << "\n";
-
-        out << "mbr_tamano: " << mbr.mbr_tamano << " bytes\n";
-        out << "mbr_fit: " << mbr.mbr_fit << "\n\n";
-
-        out << "PARTICIONES MBR (4)\n";
-        out << "idx | status | type | fit | start | size | name\n";
-        out << "----+--------+------+-----+-------+------+----------------\n";
-        for (int i = 0; i < 4; i++) {
-            const auto& pt = mbr.mbr_partitions[i];
-            out << i
-                << "   | " << pt.part_status
-                << "      | " << pt.part_type
-                << "    | " << pt.part_fit
-                << "   | " << pt.part_start
-                << "   | " << pt.part_size
-                << " | " << part_name_to_string(pt.part_name)
-                << "\n";
+        std::string error;
+        if (!render_dot(build_disk_dot(mbr), out_path, error)) {
+            return "ERROR: rep -> " + error + "\n";
         }
-
-        Partition ext{};
-        if (!find_extended_part(mbr, ext)) {
-            out << "\n(No hay partición extendida)\n";
-            return finish_ok("disk");
-        }
-
-        int32_t ext_start = ext.part_start;
-        int32_t ext_end   = ext.part_start + ext.part_size;
-
-        out << "\nEXTENDIDA\n";
-        out << "name: " << part_name_to_string(ext.part_name) << "\n";
-        out << "start: " << ext_start << "\n";
-        out << "size: " << ext.part_size << "\n";
-        out << "end: " << ext_end << "\n\n";
-
-        out << "LOGICAS (EBR CHAIN)\n";
-        out << "ebr_off | status | fit | data_start | data_size | next | name\n";
-        out << "--------+--------+-----+-----------+----------+------+----------------\n";
-
-        int32_t off = ext_start;
-        int guard = 0;
-
-        while (off >= ext_start && off < ext_end && guard < 1000) {
-            guard++;
-
-            EBR e{};
-            if (!BinaryIO::readAt(disk_path, off, &e, sizeof(EBR))) {
-                out << "ERROR leyendo EBR en offset " << off << "\n";
-                break;
-            }
-
-            out << off
-                << " | " << e.part_status
-                << "      | " << e.part_fit
-                << "   | " << e.part_start
-                << "      | " << e.part_size
-                << " | " << e.part_next
-                << " | " << part_name_to_string(e.part_name)
-                << "\n";
-
-            if (e.part_next == -1) break;
-            off = e.part_next;
-        }
-
-        if (guard >= 1000) {
-            out << "ERROR: cadena EBR demasiado larga (posible loop)\n";
-        }
-
         return finish_ok("disk");
     }
 
-    MountEntry mounted{};
-    if (!params.count("id") || !MountManager::instance().getById(params["id"], mounted)) {
-        return "ERROR: rep -> id no encontrado (use mounted para ver ids)\n";
+    if (used_id.empty()) {
+        return "ERROR: rep -> estos reportes requieren -id\n";
     }
 
     Ext2Paths fs(mounted.path, mounted.start);
     SuperBlock sb = fs.loadSuper();
     if (sb.s_magic != 0xEF53) return "ERROR: rep -> la partición no está formateada como EXT2/EXT3\n";
 
-    auto dump_inode = [&](int idx) {
-        Inode inode = fs.readInode(sb, idx);
-        out << "inode[" << idx << "]"
-            << " uid=" << inode.i_uid
-            << " gid=" << inode.i_gid
-            << " size=" << inode.i_size
-            << " type=" << inode.i_type
-            << " perm=" << inode.i_perm
-            << " blocks=";
-        for (int i = 0; i < 15; ++i) {
-            if (inode.i_block[i] >= 0) out << inode.i_block[i] << " ";
-        }
-        out << "\n";
-    };
-
-    if (name == "sb") {
-        out << "SUPERBLOCK\n";
-        out << "s_filesystem_type: " << sb.s_filesystem_type << "\n";
-        out << "s_inodes_count: " << sb.s_inodes_count << "\n";
-        out << "s_blocks_count: " << sb.s_blocks_count << "\n";
-        out << "s_free_blocks_count: " << sb.s_free_blocks_count << "\n";
-        out << "s_free_inodes_count: " << sb.s_free_inodes_count << "\n";
-        out << "s_mtime: " << sb.s_mtime << "\n";
-        out << "s_umtime: " << sb.s_umtime << "\n";
-        out << "s_mnt_count: " << sb.s_mnt_count << "\n";
-        out << "s_magic: " << sb.s_magic << "\n";
-        out << "s_inode_size: " << sb.s_inode_size << "\n";
-        out << "s_block_size: " << sb.s_block_size << "\n";
-        out << "s_first_ino: " << sb.s_first_ino << "\n";
-        out << "s_first_blo: " << sb.s_first_blo << "\n";
-        out << "s_bm_inode_start: " << sb.s_bm_inode_start << "\n";
-        out << "s_bm_block_start: " << sb.s_bm_block_start << "\n";
-        out << "s_inode_start: " << sb.s_inode_start << "\n";
-        out << "s_block_start: " << sb.s_block_start << "\n";
-        return finish_ok("sb");
-    }
-
     if (name == "bm_inode" || name == "bm_block") {
         int count = (name == "bm_inode") ? sb.s_inodes_count : sb.s_blocks_count;
         int64_t start = (name == "bm_inode") ? sb.s_bm_inode_start : sb.s_bm_block_start;
+        std::ostringstream text;
         for (int i = 0; i < count; ++i) {
             char v = '\0';
             BinaryIO::readAt(mounted.path, start + i, &v, 1);
-            out << v;
-            if ((i + 1) % 32 == 0) out << "\n";
-            else out << " ";
+            text << v;
+            if ((i + 1) % 32 == 0) text << "\n";
+            else text << " ";
         }
-        out << "\n";
+        text << "\n";
+        if (!write_text_file(out_path, text.str())) {
+            return "ERROR: rep -> no se pudo crear el archivo de reporte\n";
+        }
         return finish_ok(name);
     }
 
+    if (name == "sb") {
+        std::string error;
+        if (!render_dot(build_sb_dot(sb), out_path, error)) {
+            return "ERROR: rep -> " + error + "\n";
+        }
+        return finish_ok("sb");
+    }
+
     if (name == "inode") {
-        for (int i = 0; i < sb.s_inodes_count; ++i) {
-            char v = '\0';
-            BinaryIO::readAt(mounted.path, sb.s_bm_inode_start + i, &v, 1);
-            if (v == '1') dump_inode(i);
+        std::string error;
+        if (!render_dot(build_inode_dot(fs, sb, mounted.path), out_path, error)) {
+            return "ERROR: rep -> " + error + "\n";
         }
         return finish_ok("inode");
     }
 
     if (name == "block") {
-        for (int i = 0; i < sb.s_blocks_count; ++i) {
-            char v = '\0';
-            BinaryIO::readAt(mounted.path, sb.s_bm_block_start + i, &v, 1);
-            if (v != '1') continue;
-
-            FileBlock fb = fs.readFileBlock(sb, i);
-            out << "block[" << i << "] raw=\"";
-            for (char c : fb.b_content) {
-                if (c == '\0') break;
-                out << c;
-            }
-            out << "\"\n";
+        std::string error;
+        if (!render_dot(build_block_dot(fs, sb, mounted.path), out_path, error)) {
+            return "ERROR: rep -> " + error + "\n";
         }
         return finish_ok("block");
+    }
+
+    if (name == "tree") {
+        std::string error;
+        if (!render_dot(build_tree_dot(fs, sb), out_path, error)) {
+            return "ERROR: rep -> " + error + "\n";
+        }
+        return finish_ok("tree");
     }
 
     if (name == "file") {
@@ -326,7 +501,10 @@ std::string RepCmd::exec(const std::string& line) {
         if (!FsFileOps::readFile(fs, sb, params["path_file_ls"], content, nullptr)) {
             return "ERROR: rep -> no se pudo leer el archivo indicado\n";
         }
-        out << content << "\n";
+        std::string error;
+        if (!render_dot(build_file_dot(params["path_file_ls"], content), out_path, error)) {
+            return "ERROR: rep -> " + error + "\n";
+        }
         return finish_ok("file");
     }
 
@@ -337,29 +515,11 @@ std::string RepCmd::exec(const std::string& line) {
         Inode dir = fs.readInode(sb, dirIdx);
         if (dir.i_type != '0') return "ERROR: rep -> la ruta indicada no es carpeta\n";
 
-        auto entries = fs.listDirectory(sb, dirIdx);
-        out << "name | inode | type | perm\n";
-        for (const auto& entry : entries) {
-            Inode inode = fs.readInode(sb, entry.inodeIndex);
-            out << entry.name << " | " << entry.inodeIndex << " | " << inode.i_type << " | " << inode.i_perm << "\n";
+        std::string error;
+        if (!render_dot(build_ls_dot(fs, sb, dirIdx, params["path_file_ls"]), out_path, error)) {
+            return "ERROR: rep -> " + error + "\n";
         }
         return finish_ok("ls");
-    }
-
-    if (name == "tree") {
-        std::function<void(int32_t,const std::string&,int)> walk = [&](int32_t idx, const std::string& label, int depth) {
-            Inode inode = fs.readInode(sb, idx);
-            for (int i = 0; i < depth; ++i) out << "  ";
-            out << label << " (inode=" << idx << ", type=" << inode.i_type << ", perm=" << inode.i_perm << ")\n";
-            if (inode.i_type != '0') return;
-            auto entries = fs.listDirectory(sb, idx);
-            for (const auto& entry : entries) {
-                if (entry.name == "." || entry.name == "..") continue;
-                walk(entry.inodeIndex, entry.name, depth + 1);
-            }
-        };
-        walk(0, "/", 0);
-        return finish_ok("tree");
     }
 
     return "ERROR: rep -> nombre de reporte no soportado\n";

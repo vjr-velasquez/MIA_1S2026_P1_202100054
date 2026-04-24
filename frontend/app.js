@@ -1,6 +1,7 @@
 function $(id) { return document.getElementById(id); }
 
-const EXAMPLE_BASE_PATH = "/home/vjr-velasquez/Documentos/mia-proyecto1/outputs";
+const EXAMPLE_BASE_PATH = "/tmp/mia";
+const REPORT_LINE_REGEX = /OK:\s*rep\s*->.*?generado en:\s*(.+)$/gim;
 
 function appendOutput(text) {
   const out = $("outputArea");
@@ -10,6 +11,20 @@ function appendOutput(text) {
 
 function setHealthStatus(text) {
   $("healthStatus").textContent = text;
+}
+
+function setReportPath(path) {
+  $("reportPath").value = path ?? "";
+}
+
+function extractLastReportPath(text) {
+  let match = null;
+  let lastPath = "";
+  while ((match = REPORT_LINE_REGEX.exec(text)) !== null) {
+    lastPath = match[1].trim();
+  }
+  REPORT_LINE_REGEX.lastIndex = 0;
+  return lastPath;
 }
 
 async function checkHealth() {
@@ -51,6 +66,9 @@ async function runCommands() {
 
     appendOutput(data.output);
     if (!data.output.endsWith("\n")) appendOutput("\n");
+
+    const lastReport = extractLastReportPath(data.output);
+    if (lastReport) setReportPath(lastReport);
   } catch (e) {
     appendOutput(`ERROR: ${e.message}\n`);
   }
@@ -72,17 +90,30 @@ fdisk -size=6 -unit=M -path="${EXAMPLE_BASE_PATH}/disks/d1.mia" -name="EXT" -typ
 fdisk -size=1 -unit=M -path="${EXAMPLE_BASE_PATH}/disks/d1.mia" -name="log1" -type=L
 fdisk -size=1 -unit=M -path="${EXAMPLE_BASE_PATH}/disks/d1.mia" -name="log2" -type=L
 mount -path="${EXAMPLE_BASE_PATH}/disks/d1.mia" -name="EXT"
-rep -name=disk -id=vda1 -path="${EXAMPLE_BASE_PATH}/reports/disk.txt"
-rep -name=mbr  -id=vda1 -path="${EXAMPLE_BASE_PATH}/reports/mbr.txt"
+rep -name=disk -id=vda1 -path="${EXAMPLE_BASE_PATH}/reports/disk.svg"
+rep -name=mbr  -id=vda1 -path="${EXAMPLE_BASE_PATH}/reports/mbr.svg"
 
 # Fin
 `;
   $("inputArea").value = example;
 }
 
+function openReport() {
+  const base = $("backendUrl").value.trim().replace(/\/+$/, "");
+  const reportPath = $("reportPath").value.trim();
+
+  if (!reportPath) {
+    appendOutput("ERROR: no hay ruta de reporte para abrir\n");
+    return;
+  }
+
+  window.open(`${base}/report?path=${encodeURIComponent(reportPath)}`, "_blank", "noopener");
+}
+
 function main() {
   $("btnHealth").addEventListener("click", checkHealth);
   $("btnRun").addEventListener("click", runCommands);
+  $("btnOpenReport").addEventListener("click", openReport);
   $("btnClearOut").addEventListener("click", () => $("outputArea").value = "");
   $("btnLoadExample").addEventListener("click", loadExample);
 

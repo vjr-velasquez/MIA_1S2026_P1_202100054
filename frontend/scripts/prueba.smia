@@ -1,14 +1,14 @@
 # Archivo .smia de prueba
 
-mkdisk -size=2 -unit=M -path="/home/vjr-velasquez/Documentos/mia-proyecto1/outputs/disks/d2.mia"
+mkdisk -size=2 -unit=M -path="/tmp/mia/disks/d2.mia"
 
 # extendida + logicas
-fdisk -size=1 -unit=M -path="/home/vjr-velasquez/Documentos/mia-proyecto1/outputs/disks/d2.mia" -name="EXT2" -type=E
-fdisk -size=256 -unit=K -path="/home/vjr-velasquez/Documentos/mia-proyecto1/outputs/disks/d2.mia" -name="l1" -type=L
-fdisk -size=256 -unit=K -path="/home/vjr-velasquez/Documentos/mia-proyecto1/outputs/disks/d2.mia" -name="l2" -type=L
+fdisk -size=1 -unit=M -path="/tmp/mia/disks/d2.mia" -name="EXT2" -type=E
+fdisk -size=256 -unit=K -path="/tmp/mia/disks/d2.mia" -name="l1" -type=L
+fdisk -size=256 -unit=K -path="/tmp/mia/disks/d2.mia" -name="l2" -type=L
 
-mount -path="/home/vjr-velasquez/Documentos/mia-proyecto1/outputs/disks/d2.mia" -name="EXT2"
-rep -name=disk -id=vda1 -path="/home/vjr-velasquez/Documentos/mia-proyecto1/outputs/reports/disk2.txt"
-rep -name=mbr  -id=vda1 -path="/home/vjr-velasquez/Documentos/mia-proyecto1/outputs/reports/mbr2.txt"
+mount -path="/tmp/mia/disks/d2.mia" -name="EXT2"
+rep -name=disk -id=vda1 -path="/tmp/mia/reports/disk2.txt"
+rep -name=mbr  -id=vda1 -path="/tmp/mia/reports/mbr2.txt"
 
 # Fin

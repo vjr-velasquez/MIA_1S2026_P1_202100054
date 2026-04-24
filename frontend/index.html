@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MIA Proyecto 1</title>
+  <title>MIA Proyecto 1 - 2</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 16px; }
     .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -15,11 +15,11 @@
   </style>
 </head>
 <body>
-  <h2>MIA Proyecto 1</h2>
+  <h2>MIA Proyecto 1 - 2</h2>
 
   <div class="row">
     <label>Backend URL:</label>
-    <input id="backendUrl" type="text" value="http://localhost:8080" style="width: 260px;" />
+    <input id="backendUrl" type="text" value="http://54.145.56.247:8080" style="width: 260px;" />
     <button id="btnHealth">Health</button>
     <span id="healthStatus" class="muted"></span>
   </div>
@@ -28,7 +28,14 @@
     <input id="fileInput" type="file" accept=".smia,.txt" />
     <button id="btnLoadExample">Cargar ejemplo</button>
     <button id="btnRun">Ejecutar</button>
+    <button id="btnOpenReport">Ver reporte</button>
     <button id="btnClearOut">Limpiar salida</button>
+  </div>
+
+  <div class="row" style="margin-top: 10px;">
+    <label>Reporte:</label>
+    <input id="reportPath" type="text" placeholder="/ruta/al/reporte.svg" style="width: 420px;" />
+    <span class="muted">Se llena automáticamente con el último `rep` exitoso.</span>
   </div>
 
   <div class="grid" style="margin-top: 12px;">
